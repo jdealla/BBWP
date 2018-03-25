@@ -5,7 +5,7 @@ const replace = require('replace-in-file');
 
 // Dev Only
 const testInfo = {
-    client: 'barnes',
+    client: 'amex',
     testName: 'BB123',
     numberOfVariants: 4
 }

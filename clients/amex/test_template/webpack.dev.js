@@ -7,9 +7,6 @@ let EventHooksPlugin = require('event-hooks-webpack-plugin');
 let gulp = require('./gulpfile');
 const webpack = require('webpack');
 
-console.log(__dirname);
-
-
 let verbose = process.argv[process.argv.length - 1] === '--verbose' ? true : false;
 
 let pluginsArray = verbose ? [
@@ -100,7 +97,7 @@ function getEntryPoints() {
     let directories = getDirectoriesArray('.');
     directories.forEach(directory => {
         if (directory.toLowerCase().indexOf('challenger') > -1 || directory.toLowerCase().indexOf('variant') > -1 || directory.toLowerCase().indexOf('control') > -1) {
-            obj[directory] = `./dev/temp/${directory}.js`
+            obj[directory] = path.join(__dirname, 'dev', 'temp', `${directory}.js`) // `./dev/temp/${directory}.js`
         }
     });
     return obj;
@@ -111,7 +108,7 @@ module.exports = {
     entry: entryPoints,
     output: {
         path: __dirname,
-        filename: 'dev/[name].bundle.js'
+        filename: path.join('dev', '[name].bundle.js') // 'dev/[name].bundle.js'
     },
     plugins: pluginsArray,
     module: {

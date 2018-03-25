@@ -40,10 +40,10 @@ function getEntryPoints() {
     let directories = getDirectoriesArray('.');
     directories.forEach(directory => {
         if (directory.toLowerCase().indexOf('challenger') > -1 || directory.toLowerCase().indexOf('variant') > -1 || directory.toLowerCase().indexOf('control') > -1) {
-            obj[directory] = `./${directory}/${directory}.js`
+            obj[directory] = path.join(__dirname, directory, `${directory}.js`) // `./${directory}/${directory}.js`
         }
     });
-    obj.qualification = './qualification/qualification.js';
+    obj.qualification = path.join(__dirname, 'qualification', 'qualification.js'); //'./qualification/qualification.js';
     return obj;
 }
 let entryPoints = getEntryPoints();
@@ -52,7 +52,7 @@ module.exports = {
     entry: entryPoints,
     output: {
         path: __dirname,
-        filename: '[name]/build/[name].bundle.js'
+        filename: path.join('.', '[name]', 'build', '[name].bundle.js'), //'[name]/build/[name].bundle.js'
     },
     plugins: pluginsArray,
     module: {
