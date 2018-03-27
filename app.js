@@ -11,11 +11,18 @@ function bbwp(args){
             init(args);
             break;
         case 'searchrepos':
-            search(args[3])
+            search(args[1])
             break;
         default:
             break;
     }
 }
 
-bbwp(process.argv.slice(2))
+let mainIndex = process.argv.reduce((acc, arg, i) => {
+    if (arg.indexOf('app.js') > -1) {
+        acc = i + 1;
+    }
+    return acc;
+}, 0);
+
+bbwp(process.argv.slice(mainIndex));
