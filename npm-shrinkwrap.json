@@ -1,6 +1,6 @@
 {
-  "name": "amex_webpack_buildtool",
-  "version": "0.9.42",
+  "name": "brooks_bell_webpack_buildtool",
+  "version": "0.1.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1313,6 +1313,54 @@
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
         "postcss-value-parser": "3.3.0"
+      }
+    },
+    "aws-sdk": {
+      "version": "2.214.1",
+      "resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.214.1.tgz",
+      "integrity": "sha1-zk8j73ihLS7In1QwKJIOwEEye2Q=",
+      "dev": true,
+      "requires": {
+        "buffer": "4.9.1",
+        "events": "1.1.1",
+        "ieee754": "1.1.8",
+        "jmespath": "0.15.0",
+        "querystring": "0.2.0",
+        "sax": "1.2.1",
+        "url": "0.10.3",
+        "uuid": "3.1.0",
+        "xml2js": "0.4.17",
+        "xmlbuilder": "4.2.1"
+      },
+      "dependencies": {
+        "punycode": {
+          "version": "1.3.2",
+          "resolved": "https://registry.npmjs.org/punycode/-/punycode-1.3.2.tgz",
+          "integrity": "sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=",
+          "dev": true
+        },
+        "sax": {
+          "version": "1.2.1",
+          "resolved": "https://registry.npmjs.org/sax/-/sax-1.2.1.tgz",
+          "integrity": "sha1-e45lYZCyKOgaZq6nSEgNgozS03o=",
+          "dev": true
+        },
+        "url": {
+          "version": "0.10.3",
+          "resolved": "https://registry.npmjs.org/url/-/url-0.10.3.tgz",
+          "integrity": "sha1-Ah5NnHcF8hu/N9A861h2dAJ3TGQ=",
+          "dev": true,
+          "requires": {
+            "punycode": "1.3.2",
+            "querystring": "0.2.0"
+          }
+        },
+        "uuid": {
+          "version": "3.1.0",
+          "resolved": "https://registry.npmjs.org/uuid/-/uuid-3.1.0.tgz",
+          "integrity": "sha512-DIWtzUkw04M4k3bf1IcpS2tngXEL26YUD2M0tMDUpnUrz2hgzUBlD55a4FjdLGPvfHxS6uluGWvaVEqgBcVa+g==",
+          "dev": true
+        }
       }
     },
     "aws-sign2": {
@@ -7949,6 +7997,12 @@
       "integrity": "sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=",
       "dev": true
     },
+    "jmespath": {
+      "version": "0.15.0",
+      "resolved": "https://registry.npmjs.org/jmespath/-/jmespath-0.15.0.tgz",
+      "integrity": "sha1-o/Iiqarp+Wb10nx5ZRDigJF2Qhc=",
+      "dev": true
+    },
     "js-base64": {
       "version": "2.3.2",
       "resolved": "https://registry.npmjs.org/js-base64/-/js-base64-2.3.2.tgz",
@@ -11677,6 +11731,26 @@
       "integrity": "sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=",
       "dev": true
     },
+    "simple-git": {
+      "version": "1.92.0",
+      "resolved": "https://registry.npmjs.org/simple-git/-/simple-git-1.92.0.tgz",
+      "integrity": "sha1-YGFGjrfRnwFBB4/HQuYkV+kQ9Uc=",
+      "dev": true,
+      "requires": {
+        "debug": "3.1.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "resolved": "https://registry.npmjs.org/debug/-/debug-3.1.0.tgz",
+          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
+          "dev": true,
+          "requires": {
+            "ms": "2.0.0"
+          }
+        }
+      }
+    },
     "slash": {
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/slash/-/slash-1.0.0.tgz",
@@ -13810,6 +13884,25 @@
       "resolved": "https://registry.npmjs.org/xml-char-classes/-/xml-char-classes-1.0.0.tgz",
       "integrity": "sha1-ZGV4SKIP/F31g6Qq2KJ3tFErvE0=",
       "dev": true
+    },
+    "xml2js": {
+      "version": "0.4.17",
+      "resolved": "https://registry.npmjs.org/xml2js/-/xml2js-0.4.17.tgz",
+      "integrity": "sha1-F76T6q4/O3eTWceVtBlwWogX6Gg=",
+      "dev": true,
+      "requires": {
+        "sax": "1.2.4",
+        "xmlbuilder": "4.2.1"
+      }
+    },
+    "xmlbuilder": {
+      "version": "4.2.1",
+      "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-4.2.1.tgz",
+      "integrity": "sha1-qlijBBoGb5DqoWwvU4n/GfP0YaU=",
+      "dev": true,
+      "requires": {
+        "lodash": "4.17.4"
+      }
     },
     "xtend": {
       "version": "4.0.1",
