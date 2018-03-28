@@ -1,7 +1,7 @@
 const path = require('path');
 const colors = require('colors');
 const init = require(path.join(__dirname, 'script_init'));
-const search = require(path.join(__dirname, 'script_codeCommit'));
+const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 
 function bbwp(args){
 
@@ -12,7 +12,7 @@ function bbwp(args){
             init(args);
             break;
         case 'searchrepos':
-            search(args[1])
+            bbaws.search(args[1])
             break;
         default:
             console.log(colors.bold(colors.cyan('\n\nBrooks Bell WebPack Build Tool')))

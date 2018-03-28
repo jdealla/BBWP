@@ -3,6 +3,10 @@ const prompt = require('prompt');
 const path = require('path');
 const replace = require('replace-in-file');
 const colors = require('colors');
+const bbaws = require(path.join(__dirname, 'script_codeCommit'));
+const Git = require('simple-git');
+
+
 
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
@@ -17,8 +21,10 @@ function getPaths(testInfo) {
     const dateFormatted = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     const clientPath = path.join(__dirname, 'clients', testInfo.client);
     const newTest = path.join('.', `${dateFormatted}-${testInfo.client}_${testInfo.testName}`);
+    const repoName = `${dateFormatted}-${testInfo.client}_${testInfo.testName}`;
     const nodemodules = path.join(__dirname, 'node_modules');
     return {
+        repoName,
         variantTemplates: {
             js: path.join(clientPath, 'variant_template', 'variantTemplate.js'),
             scss: path.join(clientPath, 'variant_template', 'variantTemplate.scss'),
@@ -137,6 +143,21 @@ function getTestInfoFromArgs(args) {
     }
 }
 
+function initGit(paths) {
+    return new Promise(function(resolve,reject){
+        Git(paths.newTest)
+        .init()
+        .add('./*')
+        .commit('Initial Build')
+        .addRemote('origin', `https://git-codecommit.us-east-1.amazonaws.com/v1/repos/${paths.repoName}`)
+        .push('origin', 'master')
+        .exec(function(){
+            resolve(true);
+        });
+    });
+    
+}
+
 
 
 // Prompt Options
@@ -156,6 +177,8 @@ async function buildTest(testInfo) {
     await Promise.all(variantLetters.map((letter) => createNewVariantDir(paths, letter)));
     // Replace Paths
     await replacePathsInTest(testInfo, paths);
+    await bbaws.create(paths.repoName);
+    await initGit(paths);
     // Done
     console.log(
         cyan('\n' + `Initialization of `) +

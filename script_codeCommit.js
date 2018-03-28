@@ -4,6 +4,7 @@ const colors = require('colors');
 const path = require('path');
 const git = require('simple-git')();
 const fs = require('fs-extra');
+const Promise = require("bluebird");
 
 
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
@@ -49,6 +50,24 @@ let clone = (name) => {
 
     codecommit.getRepository(params, cloneNewRepo);
 };
+
+let create = (name) => {
+
+    const params = {
+        repositoryName: name
+    };
+
+    function createRepoPromise(param){
+        return new Promise(function(resolve,reject){
+            codecommit.createRepository(param, function(err,data){
+                 if(err !== null) return reject(err);
+                 resolve(data);
+             });
+        });
+    }
+
+    return createRepoPromise(params)
+}
 
 let search = (searchTerm) => {
     console.log(messages.btname + messages.searchWelcome);
@@ -113,4 +132,4 @@ let search = (searchTerm) => {
     codecommit.listRepositories({}, repoFinder);
 };
 
-module.exports = search;
+module.exports = { search, create };
