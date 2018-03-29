@@ -154,8 +154,7 @@ function initGit(paths) {
         .exec(function(){
             resolve(true);
         });
-    });
-    
+    });  
 }
 
 

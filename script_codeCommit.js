@@ -124,7 +124,32 @@ let search = (searchTerm) => {
                     }
                 });
             } else {
-                console.log(repoNames);
+                let headerFormat = (msg) => '\t' + colors.bold(colors.cyan(colors.underline(msg)));
+                let dateRegex = /(([0-9])+-)+/;
+                let clientRegex = /(-[a-z]+)/;
+                console.log( '\n' + headerFormat('Date') + '\t'  + headerFormat('Client') + '\t'  + headerFormat('Test Name'));
+                repoNames.forEach( repoName => {
+                    try {
+                        let date = dateRegex.exec(repoName);
+                        let client = clientRegex.exec(repoName.substr( repoName.indexOf(date) + date.length))[0];
+                        let test = repoName.substr(repoName.indexOf(client) + client.length);
+                        let dateToPrint = date[0].substr(0, date[0].length - 1);
+                        let clientToPrint = client.substr(1);
+                        let testToPrint = test.substr(1);
+                        console.log(
+                            '\t' + colors.bold(colors.magenta(dateToPrint)) + 
+                            `${dateToPrint.length > 4 ? '\t' : '\t\t'}` + colors.bold(colors.magenta(clientToPrint)) + 
+                            '\t\t' + colors.bold(colors.magenta(testToPrint))
+                        );
+                    }
+                    catch(e){
+                        console.log(
+                            '\t' + colors.bold(colors.bgRed(colors.white('Repo name not matching schema: '))) + 
+                            '\t' + colors.bold(colors.red(repoName)) 
+                        );
+                    }
+                });
+                console.log('\n' + colors.bold(colors.cyan(`Repo search completed. Found ${repoNames.length} repositories.` + '\n')));
             }
         }
     };
