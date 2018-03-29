@@ -5,6 +5,11 @@
   "main": "bundle.js",
   "devDependencies": {
   },
+  "BBConfig": {
+    "testName": "replacetestname",
+    "dateCreated": "replacedatecreated",
+    "client": "replaceclient"
+  },
   "scripts": {
     "start": "NODE_PATH=replacenodepath webpack --watch",
     "verbose-prod": "NODE_PATH=replacenodepath webpack --watch --verbose",

@@ -7,6 +7,7 @@ const fs = require('fs-extra');
 const Promise = require("bluebird");
 
 
+
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 const red = promptHelpers.red;
@@ -29,7 +30,7 @@ function doesNewTestExist(name) {
 prompt.message = '';
 prompt.delimiter = '';
 
-let clone = (name) => {
+let clone = (name, relink) => {
     const params = {
         repositoryName: name
     };
@@ -41,10 +42,15 @@ let clone = (name) => {
             var metadata = data.repositoryMetadata;
             console.log(cyan('\nBeginning cloning of ') + magenta(name));
             git.clone(metadata.cloneUrlHttp, metadata.repositoryName).exec( () => {
-                console.log(cyan('\nCloning of ') + magenta(name) + cyan(' has been ') + colors.bold(colors.rainbow('completed :-)\n')))
-            })
-            
-            
+                const package = require(path.resolve('.', metadata.repositoryName, 'package.json'));
+                if (package.hasOwnProperty('BBConfig')){
+                    relink(package, path.join('.', metadata.repositoryName)).then(function(){
+                        console.log(cyan('\nCloning of ') + magenta(name) + cyan(' has been ') + colors.bold(colors.rainbow('completed :-)\n')))
+                    });
+                } else {
+                    console.log(cyan('\nCloning of ') + magenta(name) + cyan(' has been ') + colors.bold(colors.rainbow('completed :-)\n')))
+                }
+            });
         }
     };
 
@@ -69,7 +75,7 @@ let create = (name) => {
     return createRepoPromise(params)
 }
 
-let search = (searchTerm) => {
+let search = (searchTerm, relink) => {
     console.log(messages.btname + messages.searchWelcome);
 
     const repoFinder = (err, data) => {
@@ -115,7 +121,7 @@ let search = (searchTerm) => {
                             if (doesNewTestExist(name)){
                                 console.log(red('\nCanceling operation. Repo ') + magenta(colors.underline(name)) + red(' already exists locally\n'));
                             } else {
-                                clone(name);
+                                clone(name, relink);
                             }
                             
                         } else {
@@ -149,7 +155,7 @@ let search = (searchTerm) => {
                         );
                     }
                 });
-                console.log('\n' + colors.bold(colors.cyan(`Repo search completed. Found ${repoNames.length} repositories.` + '\n')));
+                console.log('\n' + colors.bold(colors.cyan(`Found ${repoNames.length} repositories.\nRepo search completed.\n`)));
             }
         }
     };

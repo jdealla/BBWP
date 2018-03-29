@@ -7,7 +7,6 @@ const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const Git = require('simple-git');
 
 
-
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 const red = promptHelpers.red;
@@ -31,6 +30,11 @@ function getPaths(testInfo) {
         },
         // For absolute path replacement in files
         testTemplate: path.join(clientPath, 'test_template'),
+        template: {
+            webpack: path.join(clientPath, 'test_template', 'webpack.config.js'),
+            webpackDev: path.join(clientPath, 'test_template', 'webpack.dev.js'),
+            package: path.join(clientPath, 'test_template', 'package.json'),
+        },
         bbmodules: path.join(__dirname, 'bb_modules'),
         clientmodules: path.join(clientPath, 'modules'),
         newTest,
@@ -111,8 +115,8 @@ async function replacePathsInTest(testInfo, paths) {
     // Package.JSON options
     const packageOptions = {
         files: paths.replace.package,
-        from: [/replacenodepath/g, 'replaceadd', 'replaceinit'],
-        to: [paths.nodemodules, 'bar', 'test'],
+        from: [/replacenodepath/g, 'replaceadd', 'replacetestname', 'replacedatecreated', 'replaceclient'],
+        to: [paths.nodemodules, 'bar', testInfo.testName, testInfo.dateCreated, testInfo.client],
     };
 
     // Webpack options
@@ -186,6 +190,41 @@ async function buildTest(testInfo) {
     );
 }
 
+// Relinking of Webpack Files
+async function relink(package, newTest) {
+    package = Boolean(package) ? package : require(path.resolve('.','package.json'));
+    testInfo = {
+        testName: package.BBConfig.testName,
+        client: package.BBConfig.client,
+        dateCreated: package.BBConfig.dateCreated
+    };
+
+    const paths = getPaths(testInfo);
+    paths.newTest = Boolean(newTest) ? path.join('.', newTest) : path.join('.');
+    paths.replace = {
+        package: path.join(paths.newTest, 'package.json'),
+        webpack: path.join(paths.newTest, 'webpack*')
+    },
+    // Copy package.json and webpack files into cloned directory
+    await fs.copy(paths.template.webpack, path.join(paths.newTest, 'webpack.config.js'), { replace: true });
+    await fs.copy(paths.template.package, path.join(paths.newTest, 'package.json'), { replace: true });
+
+    if (testInfo.client.toLowerCase() === 'amex') {
+        await fs.copy(paths.template.webpackDev, path.join(paths.newTest, 'webpack.dev.js'), { replace: true });
+    }
+
+    // Replace Paths
+    let finalPromise = replacePathsInTest(testInfo, paths);
+    await finalPromise;
+    // Done
+    console.log(
+        cyan('\n' + `Relinking of `) +
+        magenta(`${testInfo.client}_${testInfo.testName} `) +
+        cyan(`has been completed`)
+    );
+    return finalPromise;
+}
+
 // Last Prompt Step for Confirmation
 function confirmTest(err, testInfo) {
     if (err) {
@@ -205,7 +244,7 @@ function confirmTest(err, testInfo) {
         if (err) {
             return console.log(red("\n\n" + promptHelpers.errorHandler(err) + "\n" ));
         } else {
-            obj.confirm === 'y' ?
+            obj.confirm === 'y' ? 
                 buildTest(testInfo) :
                 console.log(messages.notconfirmed);
         }
@@ -250,4 +289,4 @@ let init = (args) => {
     prompt.start();
 }
 
-module.exports = init;
+module.exports = {init, relink};
