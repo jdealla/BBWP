@@ -3,6 +3,9 @@
   "version": "0.1.1",
   "description": "A build tool for test development that supports JavaScript modules for more efficient code.",
   "main": "app.js",
+  "bin": {
+    "bbwp": "./app.js"
+  },
   "devDependencies": {
     "@babel/core": "7.0.0-beta.34",
     "@babel/preset-env": "7.0.0-beta.34",

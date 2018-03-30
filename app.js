@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const path = require('path');
 const colors = require('colors');
 const build = require(path.join(__dirname, 'script_init'));
