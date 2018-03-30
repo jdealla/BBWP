@@ -237,7 +237,7 @@ function createTempFiles() {
 }
 
 function fixPaths(contents){
-    contents = contents.replace(/(from '\.\.)/g, `from '../`);
+    contents = contents.replace(/(from '\.\.\/)/g, `from '../../`);
     contents = contents.replace(/(require ')/g, `require('../`)
     return contents;
 }
