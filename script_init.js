@@ -91,7 +91,7 @@ function buildWebpackReplaceArrays(paths, client) {
             const amexFrom = [
                 'replacetestutilities',
                 'replacequalificationoffer',
-                'replacevariantnoffer',
+                'replacevariantofferc',
             ];
             const amexTo = [
                 path.join(paths.clientmodules, 'test_utilities.js'),
@@ -125,6 +125,13 @@ async function replacePathsInTest(testInfo, paths) {
         files: paths.replace.webpack,
         from: webpackReplaceArrays.from,
         to: webpackReplaceArrays.to,
+    };
+
+    // SCSS options
+    const SCSSOptions = {
+        files: '*/*.scss',
+        from: ['bbtestnamereplace'],
+        to: testInfo.testName,
     };
 
     await replace(packageOptions)

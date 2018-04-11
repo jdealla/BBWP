@@ -98,7 +98,7 @@ module.exports = {
             bbmodules: 'replacebbmodules',
             amexmodules: 'replacemodules',
             qualification_offer: 'replacequalificationoffer',
-            variant_offer: 'replacevariantnoffer',
+            variant_offer: 'replacevariantoffer',
             test_utilities: 'replacetestutilities',
             config: path.join(__dirname, 'BB.AMEX.test.config.js'),
           }
