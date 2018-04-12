@@ -91,7 +91,7 @@ function buildWebpackReplaceArrays(paths, client) {
             const amexFrom = [
                 'replacetestutilities',
                 'replacequalificationoffer',
-                'replacevariantofferc',
+                'replacevariantoffer',
             ];
             const amexTo = [
                 path.join(paths.clientmodules, 'test_utilities.js'),
