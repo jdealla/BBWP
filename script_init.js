@@ -5,7 +5,8 @@ const replace = require('replace-in-file');
 const colors = require('colors');
 const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const Git = require('simple-git');
-
+const getDirectoriesArray = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory());
+const getPosition = function(a,b,c,d){for(c=c||0,d=d||0;0<c;){if(d=a.indexOf(b,d),0>d)return-1;--c,++d}return d-1};
 
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
@@ -17,13 +18,18 @@ const magenta = promptHelpers.magenta;
 function getPaths(testInfo) {
     // Date for New Test Directory
     const date = new Date();
-    const dateFormatted = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    // Padding for single digits
+    const month = (date.getMonth() + 1).toString().length < 2 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+    const day = (date.getDate() ).toString().length < 2 ? `0${date.getDate()}` : `${date.getDate()}`;
+    //Formatted for repo name
+    const dateFormatted = `${date.getFullYear()}-${month}-${day}`;
     const clientPath = path.join(__dirname, 'clients', testInfo.client);
     const newTest = path.join('.', `${dateFormatted}-${testInfo.client}_${testInfo.testName}`);
     const repoName = `${dateFormatted}-${testInfo.client}_${testInfo.testName}`;
     const nodemodules = path.join(__dirname, 'node_modules');
     return {
         repoName,
+        dateCreated: dateFormatted,
         variantTemplates: {
             js: path.join(clientPath, 'variant_template', 'variantTemplate.js'),
             scss: path.join(clientPath, 'variant_template', 'variantTemplate.scss'),
@@ -40,7 +46,8 @@ function getPaths(testInfo) {
         newTest,
         replace: {
             package: path.join(newTest, 'package.json'),
-            webpack: path.join(newTest, 'webpack*')
+            webpack: path.join(newTest, 'webpack*'),
+            scss: path.join(newTest, '*', '*.scss')
         },
         nodemodules,
         babelenv: path.join(nodemodules, '@babel', 'preset-env'),
@@ -68,7 +75,83 @@ async function createNewVariantDir(paths, letter) {
     return fs.copy(paths.variantTemplates.scss, newVariantPathSCSS);
 }
 
-// Gets Letters for Variant naming
+function isExistingTest(){
+    if (!fs.existsSync(path.join('.', 'package.json'))){
+        console.log(
+            red('\nError: This directory is either not a BBWP initialized directory, or is missing a "package.json" file. Please check these issues and try again.\n')
+            );
+        return false;
+    }
+    let package = require(path.resolve('.','package.json'));
+    if (!package.hasOwnProperty('BBConfig')) {
+        console.log(
+            red('\nError: This directory is either not a BBWP initialized directory, or is missing a "BBConfig" object in the "package.json" file. Please check these issues and try again.\n')
+            );
+        return false;
+    } else {
+        return true;
+    }
+}
+
+// Add Variant to Existing Test
+async function addNewVariantDir(args1) {
+    console.log(messages.btname + messages.addVariantWelcome);
+    // Check if directory has package.json and if package.json has BBConfig
+    if(!isExistingTest()){
+        return null;
+    };
+
+    // Get Test Info
+    let package = require(path.resolve('.','package.json'));
+
+    let testInfo = {
+        testName: package.BBConfig.testName,
+        client: package.BBConfig.client,
+        dateCreated: package.BBConfig.dateCreated
+    };
+    let paths = getPaths(testInfo);
+
+    // Create Name for New Variant
+    if (typeof args1 !== 'undefined'){
+        // From Args
+        let newLetter = args1.toUpperCase();
+        var variantName = 'variant' + newLetter;
+        if (fs.existsSync(path.join('.', variantName))) {
+            console.log(
+            red('\nError: The directory for ') + magenta(variantName) + red(' already exists. Please try again with another variant name or delete the existing directory for this variant\n')
+            );
+            return null;
+        };
+        
+    } else {
+        // Dynamically
+        let dirArr = getDirectoriesArray('.');
+        let variantDirLetterCharCodeArr = 
+            dirArr.filter( dir => dir.indexOf('variant') > -1 && dir.indexOf('QA') === -1)
+            .reduce( (acc, variantDir) => {
+                let index = variantDir.indexOf('variant');
+                let length = 'variant'.length;
+                let letter = variantDir.substring(index + length);
+                let charCode = letter.charCodeAt(0);
+                acc.push(charCode);
+                return acc;
+            }, []);
+        let newLetter = String.fromCharCode(variantDirLetterCharCodeArr[variantDirLetterCharCodeArr.length - 1] + 1);
+        var variantName = 'variant' + newLetter;
+    }
+    // Create paths to new variant dir
+    const newVariantPathJS = path.join('.', variantName, `${variantName}.js`);
+    const newVariantPathSCSS = path.join('.', variantName, `${variantName}.scss`);
+
+    // Copy JS and SCSS templates to new test directory
+    await fs.copy(paths.variantTemplates.js, newVariantPathJS);
+    await fs.copy(paths.variantTemplates.scss, newVariantPathSCSS);
+    console.log(
+        cyan('\nAddition of ') + magenta(variantName) + cyan(' to test ') + magenta(`${testInfo.client}_${testInfo.testName}`) + cyan(' has been') + colors.bold(colors.rainbow(' completed :)\n'))
+    );
+}
+
+// Gets Letters for variant naming upon init
 function getVariantLetters(numberOfVariants) {
     let arr = ['control'];
     for (var i = 65; i < 65 + numberOfVariants; i++) {
@@ -78,7 +161,7 @@ function getVariantLetters(numberOfVariants) {
     return arr;
 }
 
-// Sets Aliases for Client Modules in Test Build Configs
+// Sets Aliases for Client Modules in test build configs
 function buildWebpackReplaceArrays(paths, client) {
     // For All Clients
     const standardFrom = [/replacebabelpresetenv/g, /replacebabelpresetreact/g, /replacenodepath/g, 'replacebbmodules', 'replacemodules'];
@@ -111,12 +194,12 @@ function buildWebpackReplaceArrays(paths, client) {
 
 // This function sets absolute paths in the new test build to run scripts and import modules from the directory of the build tool.
 async function replacePathsInTest(testInfo, paths) {
-
+    let dateCreated = testInfo.hasOwnProperty('dateCreated') ? testInfo.dateCreated : paths.dateCreated;
     // Package.JSON options
     const packageOptions = {
         files: paths.replace.package,
-        from: [/replacenodepath/g, 'replaceadd', 'replacetestname', 'replacedatecreated', 'replaceclient'],
-        to: [paths.nodemodules, 'bar', testInfo.testName, testInfo.dateCreated, testInfo.client],
+        from: [/replacenodepath/g, 'replacetestname', 'replacedatecreated', 'replaceclient'],
+        to: [paths.nodemodules, testInfo.testName, dateCreated, testInfo.client],
     };
 
     // Webpack options
@@ -128,13 +211,17 @@ async function replacePathsInTest(testInfo, paths) {
     };
 
     // SCSS options
+    let testNameRegex = /[a-z]+[0-9]+/gi;
     const SCSSOptions = {
-        files: '*/*.scss',
+        files: paths.replace.scss,
         from: ['bbtestnamereplace'],
-        to: testInfo.testName,
+        to: testNameRegex.exec(testInfo.testName)[0].toUpperCase(),
     };
 
     await replace(packageOptions)
+    if (testInfo.client === 'amex') {
+        await replace(SCSSOptions);  
+    }
     return replace(webpackOptions)
 }
 
@@ -168,8 +255,6 @@ function initGit(paths) {
     });  
 }
 
-
-
 // Prompt Options
 prompt.message = '';
 prompt.delimiter = '';
@@ -197,13 +282,24 @@ async function buildTest(testInfo) {
     );
 }
 
+// For Existing Tests
+function getDateCreated(){
+    let lastindex = path.resolve('.').lastIndexOf(path.sep) + 1;
+    let dirname = path.resolve('.').substr(lastindex);
+    let lastIndexDate = getPosition(dirname, '-', 3);
+    return dirname.substr(0, lastIndexDate);
+}
+
 // Relinking of Webpack Files
 async function relink(package, newTest) {
+    if(!isExistingTest()){
+        return null;
+    };
     package = Boolean(package) ? package : require(path.resolve('.','package.json'));
-    testInfo = {
+    let testInfo = {
         testName: package.BBConfig.testName,
         client: package.BBConfig.client,
-        dateCreated: package.BBConfig.dateCreated
+        dateCreated: getDateCreated()
     };
 
     const paths = getPaths(testInfo);
@@ -227,7 +323,8 @@ async function relink(package, newTest) {
     console.log(
         cyan('\n' + `Relinking of `) +
         magenta(`${testInfo.client}_${testInfo.testName} `) +
-        cyan(`has been completed`)
+        cyan(`has been`) +
+        colors.bold(colors.rainbow(' completed :)\n'))
     );
     return finalPromise;
 }
@@ -296,4 +393,4 @@ let init = (args) => {
     prompt.start();
 }
 
-module.exports = {init, relink};
+module.exports = {init, relink, addNewVariantDir};
