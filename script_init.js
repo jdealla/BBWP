@@ -222,7 +222,7 @@ async function replacePathsInTest(testInfo, paths) {
     // SCSS options
     let testNameRegex = /[a-z]+[0-9]+/gi;
     const SCSSOptions = {
-        files: path.join('.', '*', '*.scss'),
+        files: path.join(paths.newTest, '*', '*.scss'),
         from: ['bbtestnamereplace'],
         to: testNameRegex.exec(testInfo.testName)[0].toUpperCase(),
     };
