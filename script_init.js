@@ -75,14 +75,14 @@ async function createNewVariantDir(paths, letter) {
     return fs.copy(paths.variantTemplates.scss, newVariantPathSCSS);
 }
 
-function isExistingTest(){
-    if (!fs.existsSync(path.join('.', 'package.json'))){
+function isExistingTest(package){
+    if (!package && !fs.existsSync(path.join('.', 'package.json'))){
         console.log(
             red('\nError: This directory is either not a BBWP initialized directory, or is missing a "package.json" file. Please check these issues and try again.\n')
             );
         return false;
     }
-    let package = require(path.resolve('.','package.json'));
+    package = Boolean(package) ? package : require(path.resolve('.','package.json'));
     if (!package.hasOwnProperty('BBConfig')) {
         console.log(
             red('\nError: This directory is either not a BBWP initialized directory, or is missing a "BBConfig" object in the "package.json" file. Please check these issues and try again.\n')
@@ -301,7 +301,7 @@ function getDateCreated(){
 
 // Relinking of Webpack Files
 async function relink(package, newTest) {
-    if(!isExistingTest()){
+    if(!isExistingTest(package)){
         return null;
     };
     package = Boolean(package) ? package : require(path.resolve('.','package.json'));
