@@ -161,11 +161,19 @@ function getVariantLetters(numberOfVariants) {
     return arr;
 }
 
+// Only used for Webpack and Package.json files
+function pcPath(str){
+    if (path.sep === "\\"){
+        str = str.replace(/\\/g, '\\\\');
+    }
+    return str;
+}
+
 // Sets Aliases for Client Modules in test build configs
 function buildWebpackReplaceArrays(paths, client) {
     // For All Clients
     const standardFrom = [/replacebabelpresetenv/g, /replacebabelpresetreact/g, /replacenodepath/g, 'replacebbmodules', 'replacemodules'];
-    const standardTo = [paths.babelenv, paths.babelreact, paths.nodemodules, paths.bbmodules, paths.clientmodules];
+    const standardTo = [pcPath(paths.babelenv), pcPath(paths.babelreact), pcPath(paths.nodemodules), pcPath(paths.bbmodules), pcPath(paths.clientmodules)];
     let obj = {};
 
     switch (client) {
@@ -177,9 +185,9 @@ function buildWebpackReplaceArrays(paths, client) {
                 'replacevariantoffer',
             ];
             const amexTo = [
-                path.join(paths.clientmodules, 'test_utilities.js'),
-                path.join(paths.clientmodules, 'offers', 'qualification_offer.js'),
-                path.join(paths.clientmodules, 'offers', 'variant_offer.js'),
+                pcPath(path.join(paths.clientmodules, 'test_utilities.js')),
+                pcPath(path.join(paths.clientmodules, 'offers', 'qualification_offer.js')),
+                pcPath(path.join(paths.clientmodules, 'offers', 'variant_offer.js')),
             ];
             obj.from = [...standardFrom, ...amexFrom];
             obj.to = [...standardTo, ...amexTo];
@@ -192,6 +200,7 @@ function buildWebpackReplaceArrays(paths, client) {
     return obj;
 }
 
+
 // This function sets absolute paths in the new test build to run scripts and import modules from the directory of the build tool.
 async function replacePathsInTest(testInfo, paths) {
     let dateCreated = testInfo.hasOwnProperty('dateCreated') ? testInfo.dateCreated : paths.dateCreated;
@@ -199,7 +208,7 @@ async function replacePathsInTest(testInfo, paths) {
     const packageOptions = {
         files: paths.replace.package,
         from: [/replacenodepath/g, 'replacetestname', 'replacedatecreated', 'replaceclient'],
-        to: [paths.nodemodules, testInfo.testName, dateCreated, testInfo.client],
+        to: [pcPath(paths.nodemodules), testInfo.testName, dateCreated, testInfo.client],
     };
 
     // Webpack options
