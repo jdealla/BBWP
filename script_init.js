@@ -68,7 +68,7 @@ async function createNewVariantDir(paths, letter) {
     // Create Paths
     const variantName = letter.toLowerCase() === 'control' ? 'control' : `variant${letter.toUpperCase()}`;
     const newVariantPathJS = path.join(paths.newTest, variantName, `${variantName}.js`);
-    const newVariantPathSCSS = path.join(paths.newTest, variantName, `${variantName}.scss`);
+    const newVariantPathSCSS = path.join(paths.newTest, variantName, variantName + '.scss');
 
     // Copy JS and SCSS templates to new test directory
     await fs.copy(paths.variantTemplates.js, newVariantPathJS);
@@ -141,7 +141,7 @@ async function addNewVariantDir(args1) {
     }
     // Create paths to new variant dir
     const newVariantPathJS = path.join('.', variantName, `${variantName}.js`);
-    const newVariantPathSCSS = path.join('.', variantName, `${variantName}.scss`);
+    const newVariantPathSCSS = path.join('.', variantName, variantName + '.scss');
 
     // Copy JS and SCSS templates to new test directory
     await fs.copy(paths.variantTemplates.js, newVariantPathJS);
@@ -213,7 +213,7 @@ async function replacePathsInTest(testInfo, paths) {
     // SCSS options
     let testNameRegex = /[a-z]+[0-9]+/gi;
     const SCSSOptions = {
-        files: paths.replace.scss,
+        files: path.join('.', '*', '*.scss'),
         from: ['bbtestnamereplace'],
         to: testNameRegex.exec(testInfo.testName)[0].toUpperCase(),
     };

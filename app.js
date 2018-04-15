@@ -34,7 +34,7 @@ function bbwp(args){
 
 
 let mainIndex = process.argv.reduce((acc, arg, i) => {
-    if (arg.indexOf('bbwp') > -1) {
+    if (arg.indexOf('app.js') > -1) {
         acc = i + 1;
     }
     return acc;
