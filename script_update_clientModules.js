@@ -23,11 +23,17 @@ function doesClientsExist() {
 }
 
 function pullLatest(repo, clientDirName, index, clientDirsLength){
-    repo.pull( (err, msg) => {
+    repo.silent(true).pull( (err, msg) => {
+        if (err){
+            console.log(colors.bold(colors.red(`\nError in `) + colors.magenta(`${clientDirName}`) + colors.red(' modules:\n')));
+            err = err.replace('Aborting', '').trim();
+            console.log(colors.bold(colors.red(err.substr(err.toLowerCase().indexOf('error') + 7))));
+            return null;
+        }
         console.log(colors.bold(
             colors.cyan('\nGit change summary for ') +
             colors.magenta(clientDirName) +
-            colors.cyan(' modules :\n\n') +
+            colors.cyan(' modules:\n\n') +
             colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
             colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
             colors.green('\t' + 'Deletions: ' + msg.summary.deletions)
