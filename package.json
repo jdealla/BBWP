@@ -1,6 +1,6 @@
 {
-  "name": "brooks_bell_webpack_buildtool",
-  "version": "0.1.1",
+  "name": "bbwp_brooks_bell_webpack_buildtool",
+  "version": "0.1.10",
   "description": "A build tool for test development that supports JavaScript modules for more efficient code.",
   "main": "app.js",
   "bin": {
@@ -39,7 +39,7 @@
     "prompt": "1.0.0",
     "replace-in-file": "3.4.0",
     "sass-loader": "6.0.6",
-    "simple-git": "^1.92.0",
+    "simple-git": "1.92.0",
     "style-loader": "0.19.0",
     "webpack": "3.8.1",
     "webpack-dev-server": "2.9.4"
