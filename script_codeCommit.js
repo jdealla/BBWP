@@ -40,13 +40,25 @@ let clone = (name, relink) => {
             console.log(err, err.stack); // an error occurred
         } else {
             var metadata = data.repositoryMetadata;
+
             console.log(cyan('\nBeginning cloning of ') + magenta(name));
+
             git.clone(metadata.cloneUrlHttp, metadata.repositoryName).exec( () => {
-                const package = require(path.resolve('.', metadata.repositoryName, 'package.json'));
-                if (package.hasOwnProperty('BBConfig')){
-                    relink(package, path.join('.', metadata.repositoryName)).then(function(){
+                const pathToPackage = path.resolve('.', metadata.repositoryName, 'package.json');
+                const doesPackageExist = fs.existsSync(pathToPackage);
+                // If repo has package.json
+                if (doesPackageExist){
+                    const package = require(pathToPackage);
+                    // If repo is BBWP
+                    if (package.hasOwnProperty('BBConfig')){
+                        relink(package, path.join('.', metadata.repositoryName)).then(function(){
+                            console.log(cyan('\nCloning of ') + magenta(name) + cyan(' has been ') + colors.bold(colors.rainbow('completed :-)\n')))
+                        });
+                    // If repo is not BBWP
+                    } else {
                         console.log(cyan('\nCloning of ') + magenta(name) + cyan(' has been ') + colors.bold(colors.rainbow('completed :-)\n')))
-                    });
+                    }
+                // If repo does not have package.json
                 } else {
                     console.log(cyan('\nCloning of ') + magenta(name) + cyan(' has been ') + colors.bold(colors.rainbow('completed :-)\n')))
                 }
