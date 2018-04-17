@@ -301,6 +301,7 @@ function getDateCreated(){
 
 // Relinking of Webpack Files
 async function relink(package, newTest) {
+    console.log(messages.btname + messages.relinkWelcome);
     if(!isExistingTest(package)){
         return null;
     };

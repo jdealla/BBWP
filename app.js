@@ -5,14 +5,23 @@ const build = require(path.join(__dirname, 'script_init'));
 const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const help = require(path.join(__dirname, 'script_help_log'));
 const updateModules = require(path.join(__dirname, 'script_update_clientModules'));
+const update = require(path.join(__dirname, 'script_update_BBWP'));
 
-function bbwp(args){
+const bbwp = (args, updateObj) => {
 
     const mainCommand = args[0];
+    const updateAvailable = updateObj.updateAvailable;
 
     switch (mainCommand) {
         case 'init':
+            if (updateAvailable) {
+                // force update
+                break;
+            }
             build.init(args);
+            break;
+        case 'update':
+            console.log(updateObj);
             break;
         case 'searchrepos':
             bbaws.search(args[1], build.relink)
@@ -32,12 +41,16 @@ function bbwp(args){
     }
 }
 
-
-let mainIndex = process.argv.reduce((acc, arg, i) => {
+const mainIndex = process.argv.reduce((acc, arg, i) => {
     if (arg.indexOf('app.js') > -1 || arg.indexOf('bbwp') > -1) {
         acc = i + 1;
     }
     return acc;
 }, 0);
 
-bbwp(process.argv.slice(mainIndex));
+async function app(){
+    let updateObj = await update.isAvailable();
+    bbwp(process.argv.slice(mainIndex), updateObj);
+}
+
+app();

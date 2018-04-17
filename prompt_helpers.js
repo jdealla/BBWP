@@ -23,7 +23,7 @@ function red(msg) {
 
 // Prompt Messages
 const messages = {
-    btname: colors.underline(cyan("\n\n" + 'Brooks Bell Webpack Build Tool')),
+    btname: colors.underline(cyan('Brooks Bell Webpack Build Tool')),
     error: red("\n\n" + 'Cancelling Initialization' + '\n'),
     stringVal: red('Invalid input. Please enter a string' + '\n'),
     intVal: red('Invalid input. Please enter an integer' + '\n'),
