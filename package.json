@@ -1,6 +1,6 @@
 {
   "name": "bbwp_brooks_bell_webpack_buildtool",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "A build tool for test development that supports JavaScript modules for more efficient code.",
   "main": "app.js",
   "bin": {
