@@ -19,7 +19,7 @@ function printComplete(i, clientDirsLength){
 }
 
 function doesClientsExist() {
-    return fs.existsSync('clients');
+    return fs.existsSync(path.join(__dirname, 'clients'));
 }
 
 function pullLatest(repo, clientDirName, index, clientDirsLength){
@@ -45,14 +45,19 @@ function pullLatest(repo, clientDirName, index, clientDirsLength){
 }
 
 function updateModules(){
-    const clientsPath = path.join('.', 'clients');
-    const clientDirs = getDirectoriesArray(clientsPath);
     console.log(messages.btname + messages.moduleUpdateWelcome);
+
     if (!doesClientsExist()){
         console.log(
             colors.bold(colors.red('\nError: Top level directory for client modules must exist and be named "clients". Please add or rename this directory and try again\n'))
         );
-    } else if (clientDirs.length < 1) {
+        return null;
+    }
+
+    const clientsPath = path.join(__dirname, 'clients');
+    const clientDirs = getDirectoriesArray(clientsPath);
+
+    if (clientDirs.length < 1) {
         console.log(
             colors.bold(colors.red('\nError: Top level directory for client modules must have at least one subdirectory and be named properly. Please add or rename one or more of these directories and try again\n'))
         );

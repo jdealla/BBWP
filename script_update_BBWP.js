@@ -21,7 +21,6 @@ function isAvailable(){
         git(__dirname).diff(function(err, res){
             let downloadedVersion = currentPackage.version;
             let latestPushedVersion = getNewestPushedVersion(res);
-            console.log(latestPushedVersion)
             if(err !== null){
                 return reject(err);
             }
