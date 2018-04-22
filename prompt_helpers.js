@@ -31,6 +31,7 @@ const messages = {
     moduleUpdateWelcome: cyan("\n" + 'Update Client Modules'),
     addVariantWelcome: cyan("\n" + 'Add New Variant'),
     searchWelcome: cyan("\n" + 'Repo Search'),
+    updateWelcome: cyan("\n" + 'BBWP Update'),
     relinkWelcome: cyan("\n" + 'Relink Node Modules'),
     searchNoMatch: cyan('No repos found for the following search:'),
     searchNotCloned: red("\n\n" + "Cancelling cloning of the following repository:\n"),

@@ -95,7 +95,7 @@ function isExistingTest(package){
 
 // Add Variant to Existing Test
 async function addNewVariantDir(args1) {
-    console.log(messages.btname + messages.addVariantWelcome);
+    console.log(`\n`+messages.btname + messages.addVariantWelcome);
     // Check if directory has package.json and if package.json has BBConfig
     if(!isExistingTest()){
         return null;
@@ -301,7 +301,7 @@ function getDateCreated(){
 
 // Relinking of Webpack Files
 async function relink(package, newTest) {
-    console.log(messages.btname + messages.relinkWelcome);
+    console.log(`\n`+messages.btname + messages.relinkWelcome);
     if(!isExistingTest(package)){
         return null;
     };
