@@ -7,7 +7,7 @@ const help = require(path.join(__dirname, 'script_help_log'));
 const updateModules = require(path.join(__dirname, 'script_update_clientModules'));
 
 const bbwp = (args, updateObj) => {
-
+    let updateAvailable = false;
     const mainCommand = args[0];
 
     switch (mainCommand) {
