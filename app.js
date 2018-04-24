@@ -10,7 +10,7 @@ const update = require(path.join(__dirname, 'script_update_BBWP'));
 const bbwp = (args, updateObj) => {
 
     const mainCommand = args[0];
-    const updateAvailable = updateObj.updateAvailable;
+    const updateAvailable = false;
 
     switch (mainCommand) {
         case 'init':
@@ -49,7 +49,7 @@ const mainIndex = process.argv.reduce((acc, arg, i) => {
 }, 0);
 
 async function app(){
-    let updateObj = await update.isAvailable();
+    let updateObj = false;
     bbwp(process.argv.slice(mainIndex), updateObj);
 }
 
