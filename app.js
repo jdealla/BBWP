@@ -5,12 +5,10 @@ const build = require(path.join(__dirname, 'script_init'));
 const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const help = require(path.join(__dirname, 'script_help_log'));
 const updateModules = require(path.join(__dirname, 'script_update_clientModules'));
-const update = require(path.join(__dirname, 'script_update_BBWP'));
 
 const bbwp = (args, updateObj) => {
 
     const mainCommand = args[0];
-    const updateAvailable = false;
 
     switch (mainCommand) {
         case 'init':
