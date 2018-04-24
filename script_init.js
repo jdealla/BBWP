@@ -221,16 +221,16 @@ async function replacePathsInTest(testInfo, paths) {
 
     // SCSS options
     let testNameRegex = /[a-z]+[0-9]+/gi;
-    const SCSSOptions = {
-        files: path.join(paths.newTest, '*', '*.scss'),
-        from: ['bbtestnamereplace'],
-        to: testNameRegex.exec(testInfo.testName)[0].toUpperCase(),
-    };
+    // const SCSSOptions = {
+    //     files: path.join(paths.newTest, '*', '*.scss'),
+    //     from: ['bbtestnamereplace'],
+    //     to: testNameRegex.exec(testInfo.testName)[0].toUpperCase(),
+    // };
 
     await replace(packageOptions)
-    if (testInfo.client === 'amex') {
-        await replace(SCSSOptions);  
-    }
+    // if (testInfo.client === 'amex') {
+    //     await replace(SCSSOptions);  
+    // }
     return replace(webpackOptions)
 }
 
