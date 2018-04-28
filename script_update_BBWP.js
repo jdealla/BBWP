@@ -137,18 +137,18 @@ function getStatusObject(res) {
 async function updateBBWP (status){
     console.log('\n' + messages.btname + messages.updateWelcome);
     if (status.updateAvailable) {
-        console.log(promptHelpers.updateStarting);
+        console.log(messages.updateStarting);
         await stashChanges();
         await pullLatest();
         await updatePackages();
-        console.log(promptHelpers.updateComplete);
+        console.log(messages.updateComplete);
     } else {
         let status = await checkStatus();
         if (status.behind > 0){
-            console.log(promptHelpers.updateStarting);
+            console.log(messages.updateStarting);
             await stashChanges();
             await pullLatest();
-            console.log(promptHelpers.updateComplete);
+            console.log(messages.updateComplete);
         } else {
             console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
         }
