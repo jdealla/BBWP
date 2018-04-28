@@ -130,7 +130,7 @@ function getStatusObject(res) {
     return {
         current: downloadedVersion, 
         pushed: newestPushedVersion, 
-        updateAvailable: downloadedVersion.trim() !== newestPushedVersion.trim()
+        updateAvailable: !newestPushedVersion ? false : downloadedVersion.trim() !== newestPushedVersion
     }
 }
 
