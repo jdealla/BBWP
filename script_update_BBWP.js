@@ -124,7 +124,6 @@ function printPullMessage(msg) {
     ));
 }
 
-
 function getNewestPushedVersionNumber(res) {
     if (res.toLowerCase().indexOf('version') === -1) {
         return false;
@@ -172,8 +171,14 @@ async function updateBBWP (status){
 }
 
 async function getStatus(){
-    await fetchLatest();
-    let log = await checkLog();
+    let latestStatus = await checkStatus();
+    let log = null;
+    if (latestStatus.behind === 0) {
+        log = {latest: {message: 'false'}};
+    } else {
+        await fetchLatest();
+        log = await checkLog();
+    }
     let status = getStatusObject(log.latest.message)
     return status;
 }
