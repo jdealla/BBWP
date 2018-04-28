@@ -42,7 +42,9 @@ const messages = {
     confirm: green("\n\n" + `Please confirm with "y" or "n"`),
     notconfirmed: red('\n' + "You didn't confirm with a 'y'. Cancelling operation. Goodbye." + '\n'),
     clone: cyan("\n" + 'Do you want to clone the following repository?'),
-    updateStarting: cyan("\n" + 'Starting pdate of ') + magenta('BBWP ') + '\n',
+    updateStarting: cyan("\n" + 'Starting update of ') + magenta('BBWP ') + '\n',
+    installPackages: cyan("\n" + 'Installing node modules'),
+
     updateComplete: cyan("\n" + 'Update of ') + magenta('BBWP ') + cyan("has been") + colors.rainbow(' completed :)') + '\n',
 }
 

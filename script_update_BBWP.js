@@ -115,6 +115,16 @@ function pullLatest() {
     })
 }
 
+function printPullMessage(msg) {
+    console.log(colors.bold(
+        colors.magenta('\nBBWP change summary:  ') +
+        colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
+        colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
+        colors.green('\t' + 'Deletions: ' + msg.summary.deletions + '\n')
+    ));
+}
+
+
 function getNewestPushedVersionNumber(res) {
     if (res.toLowerCase().indexOf('version') === -1) {
         return false;
@@ -139,15 +149,21 @@ async function updateBBWP (status){
     if (status.updateAvailable) {
         console.log(messages.updateStarting);
         await stashChanges();
-        await pullLatest();
+
+        let pullMsg = await pullLatest();
+        printPullMessage(pullMsg);
+
+        console.log(messages.installPackages);
         await updatePackages();
+
         console.log(messages.updateComplete);
     } else {
         let status = await checkStatus();
         if (status.behind > 0){
             console.log(messages.updateStarting);
             await stashChanges();
-            await pullLatest();
+            let pullMsg = await pullLatest();
+            printPullMessage(pullMsg);
             console.log(messages.updateComplete);
         } else {
             console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
