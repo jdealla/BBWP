@@ -24,7 +24,7 @@ const bbwp = (args, status) => {
             build.init(args);
             break;
         case 'update':
-            // update.updateBBWP(status);
+            update.updateBBWP(status);
             break;
         case 'searchrepos':
             bbaws.search(args[1], build.relink)
