@@ -8,6 +8,7 @@ const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 
 
+// For NPM
 // Child process constructor that returns a promise
 function ChildPromise(command, optionsArr){
     return new Promise(function(resolve,reject){
@@ -39,8 +40,68 @@ function updatePackages() {
     return ChildPromise('npm', ['install']);
 }
 
+// For Git Repo
+// Fetches latest BBWP git repo
+function fetchLatest() {
+    return new Promise(function(resolve,reject){
+        const repo = git(__dirname);
+        repo.silent(true).fetch( (err, msg) => {
+            if (err) {
+                resolve(err);
+                return;
+            } else {
+                resolve(msg);
+            }
+        });
+    })
+}
+
+// Fetches latest BBWP git repo
+function checkLog() {
+    return new Promise(function(resolve,reject){
+        const repo = git(__dirname);
+        repo.silent(true).log(['origin/update'], (err, msg) => {
+            if (err) {
+                reject(err);
+                return;
+            } else {
+                resolve(msg);
+            }
+        });
+    })
+}
+
+// Fetches latest BBWP git repo
+function checkStatus() {
+    return new Promise(function(resolve,reject){
+        const repo = git(__dirname);
+        repo.silent(true).status( (err, msg) => {
+            if (err) {
+                reject(err);
+                return;
+            } else {
+                resolve(msg);
+            }
+        });
+    })
+}
+
+function stashChanges() {
+    return new Promise(function(resolve,reject){
+        const repo = git(__dirname);
+        repo.silent(true).stash( (err, msg) => {
+            if (err) {
+                reject(err);
+                return;
+            } else {
+                resolve(msg);
+            }
+        });
+    })
+}
+
 // Pulls latest BBWP git repo
-function getLatestBBWPRepo() {
+function pullLatest() {
     return new Promise(function(resolve,reject){
         const repo = git(__dirname);
         repo.silent(true).pull( (err, msg) => {
@@ -54,46 +115,52 @@ function getLatestBBWPRepo() {
     })
 }
 
-function getNewestPushedVersion(res) {
-    let index = res.indexOf('version');
-    let newStr = res.substr(index);
-    let newVersionSubStr = newStr.substr(newStr.indexOf('version": "') + 11);
-    let lastIndex = newVersionSubStr.indexOf('"');
-    return newVersionSubStr.substr(0, lastIndex);
-}
-
-function isAvailable() {
-    return new Promise(function (resolve, reject) {
-        git(__dirname).diff(['package.json'],function (err, res) {
-            if (err !== null) {
-                return reject(err);
-            }
-            let downloadedVersion = currentPackage.version;
-            let latestPushedVersion = getNewestPushedVersion(res);
-            let obj = {
-                'newVersion': Boolean(latestPushedVersion) ? latestPushedVersion : downloadedVersion,
-                downloadedVersion,
-                'updateAvailable': downloadedVersion !== latestPushedVersion && Boolean(latestPushedVersion)
-            }
-            resolve(obj);
-        });
-    });
-}
-
-async function updateBBWP(){
-    console.log('\n' + messages.btname + messages.updateWelcome);
-    let updateObj = await isAvailable();
-    if (!updateObj.updateAvailable) {
-        console.log(colors.bold(colors.red('\nThere is not an update available at this time. Goodbye.\n')));
-        return null;
+function getNewestPushedVersionNumber(res) {
+    if (res.toLowerCase().indexOf('version') === -1) {
+        return false;
     } else {
-        let latestRepo = await getLatestBBWPRepo();
+        let versionRegex = /[\d]+\.[\d]+.[\d]+/gi;
+        return versionRegex.exec(res)[0];
     }
 }
 
-updateBBWP();
+function getStatusObject(res) {
+    let newestPushedVersion = getNewestPushedVersionNumber(res);
+    let downloadedVersion = currentPackage.version;
+    return {
+        current: downloadedVersion, 
+        pushed: newestPushedVersion, 
+        updateAvailable: downloadedVersion.trim() !== newestPushedVersion.trim()
+    }
+}
+
+async function updateBBWP (status){
+    console.log('\n' + messages.btname + messages.updateWelcome);
+    if (status.updateAvailable) {
+        await stashChanges();
+        await pullLatest();
+        await updatePackages();
+        console.log('Up to date');
+    } else {
+        let status = await checkStatus();
+        if (status.behind > 0){
+            await stashChanges();
+            await pullLatest();
+            console.log('Up to date');
+        } else {
+            console.log('Up to date');
+        }
+    }
+}
+
+async function getStatus(){
+    await fetchLatest();
+    let log = await checkLog();
+    let status = getStatusObject(log.latest.message)
+    return status;
+}
 
 module.exports = {
-    updateBBWP,
-    isAvailable
+    getStatus,
+    updateBBWP
 };
