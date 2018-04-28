@@ -44,8 +44,7 @@ const messages = {
     clone: cyan("\n" + 'Do you want to clone the following repository?'),
     updateStarting: cyan("\n" + 'Starting update of ') + magenta('BBWP ') + '\n',
     installPackages: cyan("\n" + 'Installing node modules'),
-
-    updateComplete: cyan("\n" + 'Update of ') + magenta('BBWP ') + cyan("has been") + colors.rainbow(' completed :)') + '\n',
+    updateComplete: cyan("\n" + 'Update of ') + magenta('BBWP ') + cyan("has been") + colors.bold(colors.rainbow(' completed :)')) + '\n',
 }
 
 const errorHandler = (err) => err.message.toLowerCase().indexOf('canceled') > -1 ? 'Operation canceled. Goodbye' : 'There has been an error with the following message: ' + err.message; 
