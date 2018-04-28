@@ -42,6 +42,8 @@ const messages = {
     confirm: green("\n\n" + `Please confirm with "y" or "n"`),
     notconfirmed: red('\n' + "You didn't confirm with a 'y'. Cancelling operation. Goodbye." + '\n'),
     clone: cyan("\n" + 'Do you want to clone the following repository?'),
+    updateStarting: cyan("\n" + 'Starting pdate of ') + magenta('BBWP ') + '\n',
+    updateComplete: cyan("\n" + 'Update of ') + magenta('BBWP ') + cyan("has been") + colors.rainbow(' completed :)') + '\n',
 }
 
 const errorHandler = (err) => err.message.toLowerCase().indexOf('canceled') > -1 ? 'Operation canceled. Goodbye' : 'There has been an error with the following message: ' + err.message; 
