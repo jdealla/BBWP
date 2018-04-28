@@ -12,13 +12,13 @@ const bbwp = (args, status) => {
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
     if (updateAvailable){
-        console.log(status);
+        console.log(updateNudge(status));
     }
 
     switch (mainCommand) {
         case 'init':
             if (updateAvailable) {
-                console.log('You must update.')
+                colors.bold(colors.red('You must update before initializing a new test.\n'));
                 break;
             }
             build.init(args);
