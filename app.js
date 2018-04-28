@@ -5,21 +5,28 @@ const build = require(path.join(__dirname, 'script_init'));
 const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const help = require(path.join(__dirname, 'script_help_log'));
 const updateModules = require(path.join(__dirname, 'script_update_clientModules'));
+const update = require(path.join(__dirname, 'script_update_BBWP'));
+const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
+const messages = promptHelpers.messages;
 
-const bbwp = (args, updateObj) => {
-    let updateAvailable = false;
+const bbwp = (args, status) => {
+
     const mainCommand = args[0];
+    const updateAvailable = status.updateAvailable;
+    if (updateAvailable && mainCommand !== 'update'){
+        console.log(messages.updateNudge(status));
+    }
 
     switch (mainCommand) {
         case 'init':
             if (updateAvailable) {
-                // force update
+                colors.bold(colors.red('You must update before initializing a new test.\n'));
                 break;
             }
             build.init(args);
             break;
         case 'update':
-            console.log(updateObj);
+            update.updateBBWP(status);
             break;
         case 'searchrepos':
             bbaws.search(args[1], build.relink)
@@ -35,6 +42,9 @@ const bbwp = (args, updateObj) => {
             break;
         default:
             help();
+            if (updateAvailable){
+                console.log(messages.updateNudge(status));
+            }
             break;
     }
 }
@@ -47,7 +57,7 @@ const mainIndex = process.argv.reduce((acc, arg, i) => {
 }, 0);
 
 async function app(){
-    let updateObj = false;
+    let updateObj = await update.getStatus();;
     bbwp(process.argv.slice(mainIndex), updateObj);
 }
 

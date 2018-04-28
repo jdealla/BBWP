@@ -7,15 +7,13 @@ const colors = require('colors');
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 
-function printComplete(i, clientDirsLength){
-    if (i === clientDirsLength - 1) {
+function printComplete(clientDirsLength){
         console.log('\n' + colors.bold(
             colors.cyan('Update of ') +
             colors.magenta('client modules ') +
             colors.cyan('has been ') +
             colors.rainbow('completed :)')
         )  + '\n')
-    }
 }
 
 function doesClientsExist() {
@@ -23,28 +21,28 @@ function doesClientsExist() {
 }
 
 function pullLatest(repo, clientDirName, index, clientDirsLength){
-    repo.silent(true).pull( (err, msg) => {
-        if (err){
-            console.log(colors.bold(colors.red(`\nError in `) + colors.magenta(`${clientDirName}`) + colors.red(' modules:\n')));
-            err = err.replace('Aborting', '').trim();
-            console.log(colors.bold(colors.red(err.substr(err.toLowerCase().indexOf('error') + 7))));
-            return null;
-        }
-        console.log(colors.bold(
-            colors.cyan('\nGit change summary for ') +
-            colors.magenta(clientDirName) +
-            colors.cyan(' modules:\n\n') +
-            colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
-            colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
-            colors.green('\t' + 'Deletions: ' + msg.summary.deletions)
-        ));
-        setTimeout(function(){
-            printComplete(index, clientDirsLength);
-        }, 200);
-    });
+    return new Promise( (res, rej) => {
+        repo.silent(true).pull( (err, msg) => {
+            if (err){
+                console.log(colors.bold(colors.red(`\nError in `) + colors.magenta(`${clientDirName}`) + colors.red(' modules:\n')));
+                err = err.replace('Aborting', '').trim();
+                console.log(colors.bold(colors.red(err.substr(err.toLowerCase().indexOf('error') + 7))));
+                res(null);
+            }
+            console.log(colors.bold(
+                colors.cyan('\nGit change summary for ') +
+                colors.magenta(clientDirName) +
+                colors.cyan(' modules:\n\n') +
+                colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
+                colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
+                colors.green('\t' + 'Deletions: ' + msg.summary.deletions)
+            ));
+            res(true);
+        });
+    })
 }
 
-function updateModules(){
+async function updateModules(){
     console.log(messages.btname + messages.moduleUpdateWelcome);
 
     if (!doesClientsExist()){
@@ -62,11 +60,14 @@ function updateModules(){
             colors.bold(colors.red('\nError: Top level directory for client modules must have at least one subdirectory and be named properly. Please add or rename one or more of these directories and try again\n'))
         );
     } else {
-        clientDirs.forEach( (clientDirName, i) => {
+
+        let promiseArr = clientDirs.map( (clientDirName, i) => {
             let pathToClientModule = path.join(clientsPath, clientDirName);
             let repo = git(pathToClientModule);
-            pullLatest(repo, clientDirName, i, clientDirs.length);
+            return pullLatest(repo, clientDirName, i, clientDirs.length);
         });
+        await Promise.all(promiseArr);
+        printComplete(clientDirs.length);
     }
 }
 

@@ -37,6 +37,14 @@ function help(){
         )
     );
 
+    // update
+    console.log(
+        colors.bold(
+            colors.magenta('\tupdate ') + 
+            colors.grey('- updates main BBWP directory\n\t\tand reinstalls node modules on version updates.\n')
+        )
+    );
+
     // updatemodules
     console.log(
         colors.bold(

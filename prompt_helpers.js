@@ -42,6 +42,14 @@ const messages = {
     confirm: green("\n\n" + `Please confirm with "y" or "n"`),
     notconfirmed: red('\n' + "You didn't confirm with a 'y'. Cancelling operation. Goodbye." + '\n'),
     clone: cyan("\n" + 'Do you want to clone the following repository?'),
+    updateStarting: cyan("\n" + 'Starting update of ') + magenta('BBWP ') + '\n',
+    installPackages: cyan("\n" + 'Installing node modules'),
+    updateComplete: cyan("\n" + 'Update of ') + magenta('BBWP ') + cyan("has been") + colors.bold(colors.rainbow(' completed :)')) + '\n',
+    updateNudge: (status) => {
+        return red(`\n=======================================================\n\nIMPORTANT UPDATE AVAILABLE \nUpdate to version ${status.pushed} by running the following command: `) 
+        + colors.bold((colors.blue('\n\n\tbbwp update\n\n'))) 
+        + red(`=======================================================\n`)
+    },
 }
 
 const errorHandler = (err) => err.message.toLowerCase().indexOf('canceled') > -1 ? 'Operation canceled. Goodbye' : 'There has been an error with the following message: ' + err.message; 
