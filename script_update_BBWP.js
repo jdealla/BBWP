@@ -171,14 +171,8 @@ async function updateBBWP (status){
 }
 
 async function getStatus(){
-    let latestStatus = await checkStatus();
-    let log = null;
-    if (latestStatus.behind === 0) {
-        log = {latest: {message: 'false'}};
-    } else {
-        await fetchLatest();
-        log = await checkLog();
-    }
+    await fetchLatest();
+    let log = await checkLog();
     let status = getStatusObject(log.latest.message)
     return status;
 }
