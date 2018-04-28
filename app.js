@@ -6,13 +6,15 @@ const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const help = require(path.join(__dirname, 'script_help_log'));
 const updateModules = require(path.join(__dirname, 'script_update_clientModules'));
 const update = require(path.join(__dirname, 'script_update_BBWP'));
+const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
+const messages = promptHelpers.messages;
 
 const bbwp = (args, status) => {
 
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
-    if (updateAvailable){
-        console.log(updateNudge(status));
+    if (updateAvailable && mainCommand !== 'update'){
+        console.log(messages.updateNudge(status));
     }
 
     switch (mainCommand) {
@@ -40,6 +42,9 @@ const bbwp = (args, status) => {
             break;
         default:
             help();
+            if (updateAvailable){
+                console.log(messages.updateNudge(status));
+            }
             break;
     }
 }
