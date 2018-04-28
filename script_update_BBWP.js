@@ -117,7 +117,7 @@ function pullLatest() {
 
 function printPullMessage(msg) {
     console.log(colors.bold(
-        colors.magenta('\nBBWP change summary:  ') +
+        colors.magenta('\nBBWP change summary: \n') +
         colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
         colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
         colors.green('\t' + 'Deletions: ' + msg.summary.deletions + '\n')
