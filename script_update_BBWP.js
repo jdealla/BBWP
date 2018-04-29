@@ -60,7 +60,7 @@ function fetchLatest() {
 function checkLog() {
     return new Promise(function(resolve,reject){
         const repo = git(__dirname);
-        repo.silent(true).log(['origin/update'], (err, msg) => {
+        repo.silent(true).log(['origin/master'], (err, msg) => {
             if (err) {
                 reject(err);
                 return;
