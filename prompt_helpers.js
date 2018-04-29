@@ -50,6 +50,8 @@ const messages = {
         + colors.bold((colors.blue('\n\n\tbbwp update\n\n'))) 
         + red(`=======================================================\n`)
     },
+    logError: (err) =>  red(`Error: ${err}`),
+    
 }
 
 const errorHandler = (err) => err.message.toLowerCase().indexOf('canceled') > -1 ? 'Operation canceled. Goodbye' : 'There has been an error with the following message: ' + err.message; 

@@ -143,38 +143,47 @@ function getStatusObject(res) {
     }
 }
 
-async function updateBBWP (status){
-    console.log('\n' + messages.btname + messages.updateWelcome);
-    if (status.updateAvailable) {
-        console.log(messages.updateStarting);
-        await stashChanges();
-
-        let pullMsg = await pullLatest();
-        printPullMessage(pullMsg);
-
-        console.log(messages.installPackages);
-        await updatePackages();
-
-        console.log(messages.updateComplete);
-    } else {
-        let status = await checkStatus();
-        if (status.behind > 0){
+async function updateBBWP(status) {
+    try {
+        console.log('\n' + messages.btname + messages.updateWelcome);
+        if (status.updateAvailable) {
             console.log(messages.updateStarting);
             await stashChanges();
+
             let pullMsg = await pullLatest();
             printPullMessage(pullMsg);
+
+            console.log(messages.installPackages);
+            await updatePackages();
+
             console.log(messages.updateComplete);
         } else {
-            console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
+            let status = await checkStatus();
+            if (status.behind > 0) {
+                console.log(messages.updateStarting);
+                await stashChanges();
+                let pullMsg = await pullLatest();
+                printPullMessage(pullMsg);
+                console.log(messages.updateComplete);
+            } else {
+                console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
+            }
         }
+    } catch (e) {
+        console.log(messages.logError(e));
     }
 }
 
-async function getStatus(){
-    await fetchLatest();
-    let log = await checkLog();
-    let status = getStatusObject(log.latest.message)
-    return status;
+async function getStatus() {
+    try {
+        await fetchLatest();
+        let log = await checkLog();
+        let status = getStatusObject(log.latest.message)
+        return status;
+    } catch (e) {
+        console.log(messages.logError(e));
+    }
+
 }
 
 module.exports = {

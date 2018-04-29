@@ -270,25 +270,30 @@ prompt.delimiter = '';
 
 // Main Build Function
 async function buildTest(testInfo) {
-    const paths = getPaths(testInfo);
-    // Array of strings used to create variant directories
-    const variantLetters = getVariantLetters(testInfo.numberOfVariants);
-    if (doesNewTestExist(paths)) {
-        return console.log(red('\n' + 'Sorry, that test directory already exists. Please try again.' + '\n'));
+    try {
+        const paths = getPaths(testInfo);
+        // Array of strings used to create variant directories
+        const variantLetters = getVariantLetters(testInfo.numberOfVariants);
+        if (doesNewTestExist(paths)) {
+            return console.log(red('\n' + 'Sorry, that test directory already exists. Please try again.' + '\n'));
+        }
+        // Create directory and copy templates into new test directory
+        await createTestDirectory(paths)
+        await Promise.all(variantLetters.map((letter) => createNewVariantDir(paths, letter)));
+        // Replace Paths
+        await replacePathsInTest(testInfo, paths);
+        await bbaws.create(paths.repoName);
+        await initGit(paths);
+        // Done
+        console.log(
+            cyan('\n' + `Initialization of `) +
+            magenta(`${testInfo.client}_${testInfo.testName} `) +
+            cyan(`has been `) + colors.bold(colors.rainbow('completed :-)' + '\n'))
+        );
     }
-    // Create directory and copy templates into new test directory
-    await createTestDirectory(paths)
-    await Promise.all(variantLetters.map((letter) => createNewVariantDir(paths, letter)));
-    // Replace Paths
-    await replacePathsInTest(testInfo, paths);
-    await bbaws.create(paths.repoName);
-    await initGit(paths);
-    // Done
-    console.log(
-        cyan('\n' + `Initialization of `) +
-        magenta(`${testInfo.client}_${testInfo.testName} `) +
-        cyan(`has been `) + colors.bold(colors.rainbow('completed :-)' + '\n'))
-    );
+    catch(e) {
+        console.log(messages.logError(e));
+    }
 }
 
 // For Existing Tests
@@ -301,42 +306,53 @@ function getDateCreated(){
 
 // Relinking of Webpack Files
 async function relink(package, newTest) {
-    console.log(`\n`+messages.btname + messages.relinkWelcome);
-    if(!isExistingTest(package)){
-        return null;
-    };
-    package = Boolean(package) ? package : require(path.resolve('.','package.json'));
-    let testInfo = {
-        testName: package.BBConfig.testName,
-        client: package.BBConfig.client,
-        dateCreated: getDateCreated()
-    };
+    try {
+        console.log(`\n` + messages.btname + messages.relinkWelcome);
+        if (!isExistingTest(package)) {
+            return null;
+        };
+        package = Boolean(package) ? package : require(path.resolve('.', 'package.json'));
+        let testInfo = {
+            testName: package.BBConfig.testName,
+            client: package.BBConfig.client,
+            dateCreated: getDateCreated()
+        };
 
-    const paths = getPaths(testInfo);
-    paths.newTest = Boolean(newTest) ? path.join('.', newTest) : path.join('.');
-    paths.replace = {
-        package: path.join(paths.newTest, 'package.json'),
-        webpack: path.join(paths.newTest, 'webpack*')
-    },
-    // Copy package.json and webpack files into cloned directory
-    await fs.copy(paths.template.webpack, path.join(paths.newTest, 'webpack.config.js'), { replace: true });
-    await fs.copy(paths.template.package, path.join(paths.newTest, 'package.json'), { replace: true });
+        const paths = getPaths(testInfo);
+        paths.newTest = Boolean(newTest) ? path.join('.', newTest) : path.join('.');
+        paths.replace = {
+                package: path.join(paths.newTest, 'package.json'),
+                webpack: path.join(paths.newTest, 'webpack*')
+            },
+            // Copy package.json and webpack files into cloned directory
+            await fs.copy(paths.template.webpack, path.join(paths.newTest, 'webpack.config.js'), {
+                replace: true
+            });
+        await fs.copy(paths.template.package, path.join(paths.newTest, 'package.json'), {
+            replace: true
+        });
 
-    if (testInfo.client.toLowerCase() === 'amex') {
-        await fs.copy(paths.template.webpackDev, path.join(paths.newTest, 'webpack.dev.js'), { replace: true });
+        if (testInfo.client.toLowerCase() === 'amex') {
+            await fs.copy(paths.template.webpackDev, path.join(paths.newTest, 'webpack.dev.js'), {
+                replace: true
+            });
+        }
+
+        // Replace Paths
+        let finalPromise = replacePathsInTest(testInfo, paths);
+        await finalPromise;
+        // Done
+        console.log(
+            cyan('\n' + `Relinking of `) +
+            magenta(`${testInfo.client}_${testInfo.testName} `) +
+            cyan(`has been`) +
+            colors.bold(colors.rainbow(' completed :)\n'))
+        );
+        return finalPromise;
     }
-
-    // Replace Paths
-    let finalPromise = replacePathsInTest(testInfo, paths);
-    await finalPromise;
-    // Done
-    console.log(
-        cyan('\n' + `Relinking of `) +
-        magenta(`${testInfo.client}_${testInfo.testName} `) +
-        cyan(`has been`) +
-        colors.bold(colors.rainbow(' completed :)\n'))
-    );
-    return finalPromise;
+    catch(e) {
+        console.log(messages.logError(e));
+    }
 }
 
 // Last Prompt Step for Confirmation
