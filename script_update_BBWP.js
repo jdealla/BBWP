@@ -91,7 +91,7 @@ function getBranch(repo) {
     })
 }
 
-// Fetches latest BBWP git repo
+// Fetches latest BBWP git repos
 function checkStatus() {
     return new Promise(function(resolve,reject){
         const repo = git(__dirname);
