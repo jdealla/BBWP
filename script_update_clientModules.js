@@ -159,6 +159,7 @@ async function checkLatest(repo, clientDirName, index, clientDirsLength) {
         } else {
             res(true)
         }
+        res(true);
     })
 }
 
@@ -180,7 +181,6 @@ async function checkForUpdateModules() {
                 colors.bold(colors.red('\nError: Top level directory for client modules must have at least one subdirectory and be named properly. Please add or rename one or more of these directories and try again\n'))
             );
         } else {
-
             let promiseArr = clientDirs.map((clientDirName, i) => {
                 let pathToClientModule = path.join(clientsPath, clientDirName);
                 let repo = git(pathToClientModule);
