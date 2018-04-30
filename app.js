@@ -13,7 +13,7 @@ function bbwp (args, status) {
 
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
-    
+
     if (updateAvailable && mainCommand !== 'update' && status.isOnMaster){
         console.log(messages.updateNudge(status));
     }
@@ -65,12 +65,12 @@ async function app(){
     if (process.argv.indexOf('updatemodules') === -1){
         try {
             await modules.checkForUpdateModules();
-            var updateObj = await update.getStatus();
         }
         catch(e){
             console.log(messages.logError(e));
         }
     }
+    var updateObj = await update.getStatus();
     bbwp(process.argv.slice(mainIndex), updateObj);
 }
 
