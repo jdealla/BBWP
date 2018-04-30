@@ -12,10 +12,10 @@ const messages = promptHelpers.messages;
 async function bbwp (args, status) {
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
-    if (updateAvailable && mainCommand !== 'update'){
+    if (updateAvailable && mainCommand !== 'update' && status.isOnMaster){
         console.log(messages.updateNudge(status));
     }
-    if (!updateAvailable && mainCommand !== 'update') {
+    if (!status.isOnMaster && mainCommand !== 'update') {
         console.log(messages.logBranch(status.branch, 'BBWP'));
         console.log(messages.changeBranchUpdateMsg);
     }

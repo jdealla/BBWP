@@ -181,6 +181,7 @@ async function updateBBWP(status) {
 
             console.log(messages.updateComplete);
         } else {
+            console.log(status);
             let status = await checkStatus();
             if (status.behind > 0) {
                 console.log(messages.updateStarting);
@@ -192,7 +193,7 @@ async function updateBBWP(status) {
                 if (status.isOnMaster) {
                     console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
                 } else {
-                    console.log(messages.logBranch(status.current, 'BBWP'));
+                    console.log(messages.logBranch(status.branch, 'BBWP'));
                     console.log(messages.changeBranchUpdateMsg);
                 }
             }
@@ -223,8 +224,6 @@ async function getStatus() {
 
 module.exports = {
     getStatus,
-    checkStatus,
-    fetchLatest,
     updateBBWP,
     getBranch
 };
