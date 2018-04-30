@@ -130,6 +130,7 @@ function checkStatus(repo) {
 
 async function checkLatest(repo, clientDirName, index, clientDirsLength) {
     let isRepo = isGitRepo(clientDirName);
+
     if (isRepo) {
         var branch = await update.getBranch(repo);
         if (branch.onMaster) {
@@ -137,6 +138,7 @@ async function checkLatest(repo, clientDirName, index, clientDirsLength) {
             var status = await checkStatus(repo);
         }
     }
+
     return new Promise((res, rej) => {
         if (!isRepo) {
             res(null);
@@ -145,7 +147,7 @@ async function checkLatest(repo, clientDirName, index, clientDirsLength) {
             console.log(messages.changeBranchUpdateMsg);
             res(null);
         }
-        if (branch.onMaster) {
+        if (branch.onMaster && isRepo) {
             if (status.behind > 0) {
                 console.log(colors.bold(
                     colors.yellow('\nUpdate available for ') +
@@ -154,6 +156,8 @@ async function checkLatest(repo, clientDirName, index, clientDirsLength) {
                 ));
                 res(true);
             }
+        } else {
+            res(true)
         }
     })
 }
