@@ -186,10 +186,14 @@ async function checkForUpdateModules() {
                 let repo = git(pathToClientModule);
                 return checkLatest(repo, clientDirName, i, clientDirs.length);
             });
-            await Promise.all(promiseArr);
+            let finalPromise = await Promise.all(promiseArr);
+            return finalPromise
         }
     } catch (e) {
         console.log(messages.logError(e));
+        return new Promise((res, rej) => {
+            res(e);
+        })
     }
 }
 

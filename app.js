@@ -10,9 +10,10 @@ const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 
 function bbwp (args, status) {
+
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
-
+    
     if (updateAvailable && mainCommand !== 'update' && status.isOnMaster){
         console.log(messages.updateNudge(status));
     }
@@ -61,10 +62,15 @@ const mainIndex = process.argv.reduce((acc, arg, i) => {
 }, 0);
 
 async function app(){
-    let updateObj = await update.getStatus();
     if (process.argv.indexOf('updatemodules') === -1){
-        await modules.checkForUpdateModules()
-     }
+        try {
+            await modules.checkForUpdateModules();
+            var updateObj = await update.getStatus();
+        }
+        catch(e){
+            console.log(messages.logError(e));
+        }
+    }
     bbwp(process.argv.slice(mainIndex), updateObj);
 }
 
