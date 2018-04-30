@@ -16,6 +16,10 @@ const bbwp = (args, status) => {
     if (updateAvailable && mainCommand !== 'update'){
         console.log(messages.updateNudge(status));
     }
+    if (!updateAvailable && mainCommand !== 'update') {
+        console.log(messages.logBranch(status.branch, 'BBWP'));
+        console.log(messages.changeBranchUpdateMsg);
+    }
 
     switch (mainCommand) {
         case 'init':

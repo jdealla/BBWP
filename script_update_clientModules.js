@@ -3,6 +3,8 @@ const path = require('path');
 const getDirectoriesArray = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory());
 const git = require('simple-git');
 const colors = require('colors');
+const update = require(path.join(__dirname, 'script_update_BBWP'));
+
 
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
@@ -19,6 +21,29 @@ function printComplete(clientDirsLength){
 function doesClientsExist() {
     return fs.existsSync(path.join(__dirname, 'clients'));
 }
+
+function CheckLatest(repo, clientDirName, index, clientDirsLength){
+    return new Promise( (res, rej) => {
+        repo.silent(true).pull( (err, msg) => {
+            if (err){
+                console.log(colors.bold(colors.red(`\nError in `) + colors.magenta(`${clientDirName}`) + colors.red(' modules:\n')));
+                err = err.replace('Aborting', '').trim();
+                console.log(colors.bold(colors.red(err.substr(err.toLowerCase().indexOf('error') + 7))));
+                res(null);
+            }
+            console.log(colors.bold(
+                colors.cyan('\nGit change summary for ') +
+                colors.magenta(clientDirName) +
+                colors.cyan(' modules:\n\n') +
+                colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
+                colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
+                colors.green('\t' + 'Deletions: ' + msg.summary.deletions)
+            ));
+            res(true);
+        });
+    })
+}
+
 
 function pullLatest(repo, clientDirName, index, clientDirsLength){
     return new Promise( (res, rej) => {

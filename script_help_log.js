@@ -2,7 +2,7 @@ const colors = require('colors');
 
 function help(){
     // Main Prompt
-    console.log(colors.bold(colors.cyan('\n\nBrooks Bell WebPack Build Tool')));
+    console.log(colors.bold(colors.cyan('\nBrooks Bell WebPack Build Tool')));
     console.log(colors.bold(colors.cyan('\nPlease enter one of the following commands:')));
 
     // init

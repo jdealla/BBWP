@@ -21,6 +21,10 @@ function red(msg) {
     return colors.bold(colors.red(msg));
 }
 
+function yellow(msg) {
+    return colors.bold(colors.yellow(msg));
+}
+
 // Prompt Messages
 const messages = {
     btname: colors.underline(cyan('Brooks Bell Webpack Build Tool')),
@@ -51,7 +55,11 @@ const messages = {
         + red(`=======================================================\n`)
     },
     logError: (err) =>  red(`Error: ${err}`),
-    
+    logBranch: (branch, dir) => {
+        return yellow(`\nWarning: You are currently on the `) + magenta(branch) +  yellow(' branch of ') + magenta(dir) 
+        + yellow('.')
+    },
+    changeBranchUpdateMsg: yellow('Please checkout ') + magenta('master') + yellow(' in order to check for updates.\n'),
 }
 
 const errorHandler = (err) => err.message.toLowerCase().indexOf('canceled') > -1 ? 'Operation canceled. Goodbye' : 'There has been an error with the following message: ' + err.message; 

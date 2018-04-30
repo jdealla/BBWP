@@ -30,7 +30,6 @@ function ChildPromise(command, optionsArr){
                 reject(code);
             }
         });
-        
     });
 }
 
@@ -70,6 +69,29 @@ function checkLog() {
         });
     })
 }
+
+function isOnMaster(res) {
+    return {
+        onMaster: res.current === 'master',
+        current: res.current,
+    }
+}
+
+function getBranch() {
+    return new Promise(function(resolve,reject){
+        const repo = git(__dirname);
+        repo.silent(true).branch((err, msg) => {
+            if (err) {
+                reject(err);
+                return;
+            } else {
+                resolve(isOnMaster(msg));
+            }
+        });
+    })
+}
+
+
 
 // Fetches latest BBWP git repo
 function checkStatus() {
@@ -125,6 +147,9 @@ function printPullMessage(msg) {
 }
 
 function getNewestPushedVersionNumber(res) {
+    if (typeof res !== 'string'){
+        return false;
+    }
     if (res.toLowerCase().indexOf('version') === -1) {
         return false;
     } else {
@@ -166,7 +191,12 @@ async function updateBBWP(status) {
                 printPullMessage(pullMsg);
                 console.log(messages.updateComplete);
             } else {
-                console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
+                if (status.isOnMaster) {
+                    console.log(colors.bold(colors.magenta('\nYour BBWP is already up to date.\n')));;
+                } else {
+                    console.log(messages.logBranch(status.current, 'BBWP'));
+                    console.log(messages.changeBranchUpdateMsg);
+                }
             }
         }
     } catch (e) {
@@ -176,17 +206,30 @@ async function updateBBWP(status) {
 
 async function getStatus() {
     try {
-        await fetchLatest();
-        let log = await checkLog();
-        let status = getStatusObject(log.latest.message)
-        return status;
+        let status = null;
+        let branch = await getBranch();
+        if (!branch.onMaster){
+            status === 'false';
+            return {'branch': branch.current, updateAvailable: false, isOnMaster: false};
+        } else {
+            await fetchLatest();
+            let log = await checkLog();
+            status = getStatusObject(log.latest.message);
+            status.isOnMaster = true;
+            return status;
+        }
     } catch (e) {
         console.log(messages.logError(e));
     }
-
 }
+
+// getBranch().then(res => {
+//     console.log(messages.logBranch(res.current, 'BBWP'))
+//     console.log(messages.changeBranchUpdateMsg);
+// });
 
 module.exports = {
     getStatus,
-    updateBBWP
+    updateBBWP,
+    getBranch
 };
