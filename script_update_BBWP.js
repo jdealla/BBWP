@@ -182,7 +182,7 @@ async function updateBBWP(status) {
             console.log(messages.updateComplete);
         } else {
             let commits = await checkStatus();
-            if (commits.behind > 0) {
+            if (commits.behind > 0 && status.isOnMaster) {
                 console.log(messages.updateStarting);
                 await stashChanges();
                 let pullMsg = await pullLatest();
