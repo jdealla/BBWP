@@ -9,7 +9,7 @@ const update = require(path.join(__dirname, 'script_update_BBWP'));
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 
-async function bbwp (args, status) {
+function bbwp (args, status) {
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
 
@@ -20,10 +20,7 @@ async function bbwp (args, status) {
         console.log(messages.logBranch(status.branch, 'BBWP'));
         console.log(messages.changeBranchUpdateMsg);
     }
-    if (mainCommand !== 'updatemodules'){
-       await modules.checkForUpdateModules()
-    }
-
+    
     switch (mainCommand) {
         case 'init':
             if (updateAvailable) {
@@ -64,7 +61,10 @@ const mainIndex = process.argv.reduce((acc, arg, i) => {
 }, 0);
 
 async function app(){
-    let updateObj = await update.getStatus();;
+    let updateObj = await update.getStatus();
+    if (process.argv.indexOf('updatemodules') === -1){
+        await modules.checkForUpdateModules()
+     }
     bbwp(process.argv.slice(mainIndex), updateObj);
 }
 
