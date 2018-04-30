@@ -59,6 +59,9 @@ const messages = {
         return yellow(`\nWarning: You are currently on the `) + magenta(branch) +  yellow(' branch of ') + magenta(dir) 
         + yellow('.')
     },
+    notRepo: (client) => {
+        return red(`\nThe directory `) + magenta('clients/' + client) + red(' is not a git repo. Update for this module cancelled.')
+    },
     changeBranchUpdateMsg: yellow('Please checkout ') + magenta('master') + yellow(' in order to check for updates.\n'),
 }
 

@@ -77,9 +77,9 @@ function isOnMaster(res) {
     }
 }
 
-function getBranch() {
+function getBranch(repo) {
     return new Promise(function(resolve,reject){
-        const repo = git(__dirname);
+        repo = typeof repo === 'undefined' ? git(__dirname) : repo;
         repo.silent(true).branch((err, msg) => {
             if (err) {
                 reject(err);
@@ -90,8 +90,6 @@ function getBranch() {
         });
     })
 }
-
-
 
 // Fetches latest BBWP git repo
 function checkStatus() {
@@ -223,13 +221,10 @@ async function getStatus() {
     }
 }
 
-// getBranch().then(res => {
-//     console.log(messages.logBranch(res.current, 'BBWP'))
-//     console.log(messages.changeBranchUpdateMsg);
-// });
-
 module.exports = {
     getStatus,
+    checkStatus,
+    fetchLatest,
     updateBBWP,
     getBranch
 };

@@ -4,13 +4,12 @@ const colors = require('colors');
 const build = require(path.join(__dirname, 'script_init'));
 const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const help = require(path.join(__dirname, 'script_help_log'));
-const updateModules = require(path.join(__dirname, 'script_update_clientModules'));
+const modules = require(path.join(__dirname, 'script_update_clientModules'));
 const update = require(path.join(__dirname, 'script_update_BBWP'));
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 
-const bbwp = (args, status) => {
-
+async function bbwp (args, status) {
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
     if (updateAvailable && mainCommand !== 'update'){
@@ -19,6 +18,9 @@ const bbwp = (args, status) => {
     if (!updateAvailable && mainCommand !== 'update') {
         console.log(messages.logBranch(status.branch, 'BBWP'));
         console.log(messages.changeBranchUpdateMsg);
+    }
+    if (mainCommand !== 'updatemodules'){
+       await modules.checkForUpdateModules()
     }
 
     switch (mainCommand) {
@@ -36,7 +38,7 @@ const bbwp = (args, status) => {
             bbaws.search(args[1], build.relink)
             break;
         case 'updatemodules':
-            updateModules();
+            modules.updateModules();
             break;
         case 'relink':
             build.relink();
