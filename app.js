@@ -12,6 +12,7 @@ const messages = promptHelpers.messages;
 async function bbwp (args, status) {
     const mainCommand = args[0];
     const updateAvailable = status.updateAvailable;
+
     if (updateAvailable && mainCommand !== 'update' && status.isOnMaster){
         console.log(messages.updateNudge(status));
     }

@@ -181,9 +181,8 @@ async function updateBBWP(status) {
 
             console.log(messages.updateComplete);
         } else {
-            console.log(status);
-            let status = await checkStatus();
-            if (status.behind > 0) {
+            let commits = await checkStatus();
+            if (commits.behind > 0) {
                 console.log(messages.updateStarting);
                 await stashChanges();
                 let pullMsg = await pullLatest();
