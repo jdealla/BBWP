@@ -40,6 +40,7 @@ function getPaths(testInfo) {
             webpack: path.join(clientPath, 'test_template', 'webpack.config.js'),
             webpackDev: path.join(clientPath, 'test_template', 'webpack.dev.js'),
             package: path.join(clientPath, 'test_template', 'package.json'),
+            gulpFile: path.join(clientPath, 'test_template', 'gulpFile.js'),
         },
         bbmodules: path.join(__dirname, 'bb_modules'),
         clientmodules: path.join(clientPath, 'modules'),
@@ -328,9 +329,12 @@ async function relink(package, newTest) {
             await fs.copy(paths.template.webpack, path.join(paths.newTest, 'webpack.config.js'), {
                 replace: true
             });
-        await fs.copy(paths.template.package, path.join(paths.newTest, 'package.json'), {
-            replace: true
-        });
+            await fs.copy(paths.template.package, path.join(paths.newTest, 'package.json'), {
+                replace: true
+            });
+            await fs.copy(paths.template.gulpFile, path.join(paths.newTest, 'gulpFile.js'), {
+                replace: true
+            });
 
         if (testInfo.client.toLowerCase() === 'amex') {
             await fs.copy(paths.template.webpackDev, path.join(paths.newTest, 'webpack.dev.js'), {
