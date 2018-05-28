@@ -184,11 +184,15 @@ function buildWebpackReplaceArrays(paths, client) {
                 'replacetestutilities',
                 'replacequalificationoffer',
                 'replacevariantoffer',
+                'replacereacttestutilities',
+                'replaceinjector',
             ];
             const amexTo = [
                 pcPath(path.join(paths.clientmodules, 'test_utilities.js')),
                 pcPath(path.join(paths.clientmodules, 'offers', 'qualification_offer.js')),
                 pcPath(path.join(paths.clientmodules, 'offers', 'variant_offer.js')),
+                pcPath(path.join(paths.clientmodules, 'react', 'test_utilities.jsx')),
+                pcPath(path.join(paths.clientmodules, 'ngInjector')),
             ];
             obj.from = [...standardFrom, ...amexFrom];
             obj.to = [...standardTo, ...amexTo];
