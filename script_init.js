@@ -3,16 +3,26 @@ const prompt = require('prompt');
 const path = require('path');
 const replace = require('replace-in-file');
 const colors = require('colors');
-const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 const Git = require('simple-git');
 const getDirectoriesArray = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory());
 const getPosition = function(a,b,c,d){for(c=c||0,d=d||0;0<c;){if(d=a.indexOf(b,d),0>d)return-1;--c,++d}return d-1};
+const bbwpPackage = require(path.join(__dirname, 'package.json'));
+
+// Removed for Cloud9
+// const bbaws = require(path.join(__dirname, 'script_codeCommit'));
 
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 const red = promptHelpers.red;
 const cyan = promptHelpers.cyan;
 const magenta = promptHelpers.magenta;
+
+const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', 'metlife', 'blizzard', 'nick', 'ihg', 'fedex', 'vfoundation', 'suntrust', 'oppenheimer', 'bankofamerica', 'clinique', 'totalwine', 'blackrock', 'salesforce'];
+
+let verifyClient = (clientInput) => {
+    let clientName = clientInput.toLowerCase();
+    return clients.some(client => client === clientName);
+}
 
 // Paths for Build Tool Templates
 function getPaths(testInfo) {
@@ -48,7 +58,7 @@ function getPaths(testInfo) {
         replace: {
             package: path.join(newTest, 'package.json'),
             webpack: path.join(newTest, 'webpack*'),
-            scss: path.join(newTest, '*', '*.scss')
+            scss: path.join(newTest, '*', '*.scss'),
         },
         nodemodules,
         babelenv: path.join(nodemodules, '@babel', 'preset-env'),
@@ -78,16 +88,12 @@ async function createNewVariantDir(paths, letter) {
 
 function isExistingTest(package){
     if (!package && !fs.existsSync(path.join('.', 'package.json'))){
-        console.log(
-            red('\nError: This directory is either not a BBWP initialized directory, or is missing a "package.json" file. Please check these issues and try again.\n')
-            );
+        console.log(messages.missingPackage);
         return false;
     }
     package = Boolean(package) ? package : require(path.resolve('.','package.json'));
     if (!package.hasOwnProperty('BBConfig')) {
-        console.log(
-            red('\nError: This directory is either not a BBWP initialized directory, or is missing a "BBConfig" object in the "package.json" file. Please check these issues and try again.\n')
-            );
+        console.log(message.missingConfig);
         return false;
     } else {
         return true;
@@ -255,6 +261,7 @@ function getTestInfoFromArgs(args) {
     }
 }
 
+// Commits to the AWS Repo; Not used in Cloud9 Version
 function initGit(paths) {
     return new Promise(function(resolve,reject){
         Git(paths.newTest)
@@ -280,21 +287,18 @@ async function buildTest(testInfo) {
         // Array of strings used to create variant directories
         const variantLetters = getVariantLetters(testInfo.numberOfVariants);
         if (doesNewTestExist(paths)) {
-            return console.log(red('\n' + 'Sorry, that test directory already exists. Please try again.' + '\n'));
+            return console.log(red(messages.alreadyExists));
         }
         // Create directory and copy templates into new test directory
         await createTestDirectory(paths)
         await Promise.all(variantLetters.map((letter) => createNewVariantDir(paths, letter)));
         // Replace Paths
         await replacePathsInTest(testInfo, paths);
-        await bbaws.create(paths.repoName);
-        await initGit(paths);
+        // Removing AWS repo creation for Cloud9
+        // await bbaws.create(paths.repoName);
+        // await initGit(paths);
         // Done
-        console.log(
-            cyan('\n' + `Initialization of `) +
-            magenta(`${testInfo.client}_${testInfo.testName} `) +
-            cyan(`has been `) + colors.bold(colors.rainbow('completed :-)' + '\n'))
-        );
+        console.log(messages.initComplete(testInfo));
     }
     catch(e) {
         console.log(messages.logError(e));
@@ -350,12 +354,7 @@ async function relink(package, newTest) {
         let finalPromise = replacePathsInTest(testInfo, paths);
         await finalPromise;
         // Done
-        console.log(
-            cyan('\n' + `Relinking of `) +
-            magenta(`${testInfo.client}_${testInfo.testName} `) +
-            cyan(`has been`) +
-            colors.bold(colors.rainbow(' completed :)\n'))
-        );
+        console.log(messages.relinkComplete);
         return finalPromise;
     }
     catch(e) {
@@ -368,7 +367,15 @@ function confirmTest(err, testInfo) {
     if (err) {
         return console.log(red("\n\n" + promptHelpers.errorHandler(err) + "\n" ));
     }
-    let printedInfo = JSON.stringify(testInfo, null, 2);
+    // Checks if BBWP's package.json does not have a hardcoded client or is set to default for installations that allow for multiple clients.
+    if (!bbwpPackage.config || !bbwpPackage.config.client || bbwpPackage.config.client === 'default') {
+        let clientExists = verifyClient(testInfo.client);
+        if (!clientExists) {
+            return console.log(messages.clientDoesntExist(testInfo.client));
+        }
+    } else {
+        testInfo.client = bbwpPackage.config.client;
+    }
     prompt.get({
         name: 'confirm',
         required: true,

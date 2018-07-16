@@ -49,20 +49,42 @@ const messages = {
     updateStarting: cyan("\n" + 'Starting update of ') + magenta('BBWP ') + '\n',
     installPackages: cyan("\n" + 'Installing node modules'),
     updateComplete: cyan("\n" + 'Update of ') + magenta('BBWP ') + cyan("has been") + colors.bold(colors.rainbow(' completed :)')) + '\n',
+    alreadyExists: '\n' + 'Sorry, that test directory already exists. Please try again.' + '\n',
+    changeBranchUpdateMsg: yellow('Please checkout ') + magenta('master') + yellow(' in order to check for updates.\n'),
+    missingPackage: red('\nError: This directory is either not a BBWP initialized directory, or is missing a "package.json" file. Please check these issues and try again.\n'),
+    missingConfig:  red('\nError: This directory is either not a BBWP initialized directory, or is missing a "BBConfig" object in the "package.json" file. Please check these issues and try again.\n'),
+    clientDoesntExist: (clientName) => {
+        return red('\nClient ') + magenta(clientName) + red(' does not exist. Please try again.\n');
+    },
     updateNudge: (status) => {
         return red(`\n=======================================================\n\nIMPORTANT UPDATE AVAILABLE \nUpdate to version ${status.pushed} by running the following command: `) 
         + colors.bold((colors.blue('\n\n\tbbwp update\n\n'))) 
         + red(`=======================================================\n`)
     },
+    initComplete: (testInfo) => {
+        return  cyan('\n' + `Initialization of `) + 
+                magenta(`${testInfo.client}_${testInfo.testName} `) + 
+                cyan(`has been `) + 
+                colors.bold(colors.rainbow('completed :-)' + '\n'))
+    },
+    relinkComplete: (testInfo) => {
+        return  cyan('\n' + `Relinking of `) + 
+                magenta(`${testInfo.client}_${testInfo.testName} `) +
+                cyan(`has been`) + 
+                colors.bold(colors.rainbow(' completed :)\n'));
+    },
     logError: (err) =>  red(`Error: ${err}`),
     logBranch: (branch, dir) => {
-        return yellow(`\nWarning: You are currently on the `) + magenta(branch) +  yellow(' branch of ') + magenta(dir) 
-        + yellow('.')
+        return  yellow(`\nWarning: You are currently on the `) + 
+                magenta(branch) +  yellow(' branch of ') + 
+                magenta(dir) + 
+                yellow('.');
     },
     notRepo: (client) => {
-        return red(`\nThe directory `) + magenta('clients/' + client) + red(' is not a git repo. Update for this module cancelled.')
+        return  red(`\nThe directory `) + 
+                magenta('clients/' + client) + 
+                red(' is not a git repo. Update for this module cancelled.');
     },
-    changeBranchUpdateMsg: yellow('Please checkout ') + magenta('master') + yellow(' in order to check for updates.\n'),
 }
 
 const errorHandler = (err) => err.message.toLowerCase().indexOf('canceled') > -1 ? 'Operation canceled. Goodbye' : 'There has been an error with the following message: ' + err.message; 
