@@ -9,17 +9,17 @@ function help(){
     console.log(
         colors.bold(
             colors.magenta('\n\tinit [client] [testName] [numberOfVariants] ') + 
-            colors.grey('- initializes a new test build in the current directory.')
+            colors.grey('- initializes a new test build in the current directory.\n')
         )
     );
 
     // searchrepos
-    console.log(
-        colors.bold(
-            colors.magenta('\n\tsearchrepos [repoName]') + 
-            colors.grey(' \t- searches AWS for a repo and clones it locally if found.\n')
-        )
-    );
+    // console.log(
+    //     colors.bold(
+    //         colors.magenta('\n\tsearchrepos [repoName]') + 
+    //         colors.grey(' \t- searches AWS for a repo and clones it locally if found.\n')
+    //     )
+    // );
 
     // relink
     console.log(

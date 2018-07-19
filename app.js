@@ -33,9 +33,9 @@ function bbwp (args, status) {
         case 'update':
             update.updateBBWP(status);
             break;
-        case 'searchrepos':
-            bbaws.search(args[1], build.relink)
-            break;
+        // case 'searchrepos':
+        //     bbaws.search(args[1], build.relink)
+        //     break;
         case 'updatemodules':
             modules.updateModules();
             break;
