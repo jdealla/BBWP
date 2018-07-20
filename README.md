@@ -30,11 +30,10 @@ A new build tool that utilizes WebPack for module bundling.
 {
     "name": "bbwp_brooks_bell_webpack_buildtool",
      "version": "1.0.0",
-    ...
+    // rest of the normal package.json contents
     "config": {
         "client": "happybooks"
-    },
-    ...
+    }
 }
 ```
 
