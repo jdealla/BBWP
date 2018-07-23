@@ -96,7 +96,7 @@ export let getAllHappyBooks = () => {
     return fetch('http://happybooks.com/api/v1/allBooks')
             .then( res => res.json())
             .then( books => {
-                console.log('Got all the books', books);
+                console.log('Got all the books!');
                 return books;
             });
 };
