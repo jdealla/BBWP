@@ -38,6 +38,7 @@ function bbwp (args, status) {
         //     break;
         case 'updatemodules':
             modules.updateModules();
+            modules.updateBBModules();
             break;
         case 'relink':
             build.relink();
@@ -65,6 +66,7 @@ async function app(){
     if (process.argv.indexOf('updatemodules') === -1){
         try {
             await modules.checkForUpdateModules();
+            await modules.checkUpdateForBBmodules();
         }
         catch(e){
             console.log(messages.logError(e));

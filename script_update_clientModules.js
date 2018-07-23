@@ -253,6 +253,12 @@ async function updateBBModules() {
                     colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
                     colors.green('\t' + 'Deletions: ' + msg.summary.deletions)
                 ));
+                console.log('\n' + colors.bold(
+                    colors.cyan('Update of ') +
+                    colors.magenta('bbmodules ') +
+                    colors.cyan('has been ') +
+                    colors.rainbow('completed :)')
+                ) + '\n')
                 res(true);
             });
         });
