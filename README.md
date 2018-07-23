@@ -21,9 +21,11 @@ A new build tool that utilizes WebPack for module bundling.
 3. ``nvm alias default 8.11.1``
 
 ### Installation Steps
+After you have the correct version of Node installed and in use, follow these steps to install BBWP in a Cloud9 environment.
+
 1. In the home directory of a Cloud9 environment, run ``git clone https://github.com/BrooksBellInc/bbwp.git``.
 2. Navigate into the newly created ``BBWP`` directory and run ``npm link``.
-3. (Optional) If the installation is for a particular client, open the ``package.json`` and add a ``config`` to the top level object. This object should have a ``client`` property, whose value should be the name of the client for that particular installation:  
+3. If the installation is for a particular client, open the ``package.json`` and add a ``config`` property to the top level object. This object should have a ``client`` property, whose value should be the name of the client for that particular installation:  
 ```javascript 
 // package.json in the BBWP directory
 
@@ -36,6 +38,20 @@ A new build tool that utilizes WebPack for module bundling.
     }
 }
 ```
+
+* Note that the client name should match one of the strings in the following client array:
+
+```javascript
+const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', 'metlife', 'blizzard', 'nick', 'ihg', 'fedex', 'vfoundation', 'suntrust', 'oppenheimer', 'bankofamerica', 'clinique', 'totalwine', 'blackrock', 'salesforce'];
+```
+
+4. Within the BBWP directory, make a directory named ``clients``. Navigate to the newly created ``clients`` directory and make a new directory with the name of the client for that environment.
+The name of the directory for the client should match one the strings in the clients array above.
+
+5. Navigate back to the main BBWP directory, and run the following command to install the bbmodules ``git clone https://bitbucket.org/jdalessandro_brooksbell/brooks-bell-modules.git bbmodules``.
+
+#### Common Issues in Installation
+* If the correct Node version is not set before the ``npm link`` command is executed, the ``node-sass`` package will be bound to the incorrect version of Node, and therefore will break execution during Webpack compiling. If this is the case, you'll need to make sure to install and use the correct version of Node (see above), delete the ``node-sass`` package, and rerun npm install.
 
 ### BBWP Commands
 
