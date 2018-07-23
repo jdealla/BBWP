@@ -39,7 +39,7 @@ A new build tool that utilizes WebPack for module bundling.
 
 ### BBWP Commands
 
-* ``init [client] [testName] [numberOfVariants]`` - initializes a new test build in the current directory.
+* ``init [client] [testName] [numberOfVariants]`` - initializes a new test build in the current directory. Each new test build includes a control directory in addition to the number of variants specified.
 
 * ``add [newVariantLetter]`` - adds a new variant to an existing test. The new variant letter can be passed in or created dynamically.
 
