@@ -51,7 +51,7 @@ The name of the directory for the client should match one the strings in the cli
 5. Navigate back to the main BBWP directory, and run the following command to install the bbmodules ``git clone https://bitbucket.org/jdalessandro_brooksbell/brooks-bell-modules.git bbmodules``.
 
 #### Common Issues in Installation
-* If the correct Node version is not set before the ``npm link`` command is executed, the ``node-sass`` package will be bound to the incorrect version of Node, and therefore will break execution during Webpack compiling. If this is the case, you'll need to make sure to install and use the correct version of Node (see above), delete the ``node-sass`` package, and rerun npm install.
+* If the correct Node version is not set before the ``npm link`` command is executed, the ``node-sass`` package will be bound to the incorrect version of Node, and therefore will break execution during Webpack compiling. If this is the case, you'll need to make sure to install and use the correct version of Node (see above), delete the ``node-sass`` package, and run ``npm install``.
 
 ### BBWP Commands
 
