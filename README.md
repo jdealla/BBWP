@@ -94,8 +94,8 @@ export let pollingFunction = (selector) => {
 
 export let getAllHappyBooks = () => {
     return fetch('http://happybooks.com/api/v1/allBooks')
-            .then(res => res.json())
-            .then( (books) => {
+            .then( res => res.json())
+            .then( books => {
                 console.log('Got all the books', books);
                 return books;
             });
