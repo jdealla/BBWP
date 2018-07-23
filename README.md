@@ -23,7 +23,7 @@ A new build tool that utilizes WebPack for module bundling.
 ### Installation Steps
 After you have the correct version of Node installed and in use, follow these steps to install BBWP in a Cloud9 environment.
 
-1. In the home directory of a Cloud9 environment, run ``git clone https://github.com/BrooksBellInc/bbwp.git``.
+1. In the home directory of a Cloud9 environment, run ``git clone https://github.com/BrooksBellInc/bbwp.git BBWP``.
 2. Navigate into the newly created ``BBWP`` directory and run ``npm link``.
 3. If the installation is for a particular client, open the ``package.json`` and add a ``config`` property to the top level object. This object should have a ``client`` property, whose value should be the name of the client for that particular installation:  
 ```javascript 
