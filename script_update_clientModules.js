@@ -261,8 +261,6 @@ async function updateBBModules() {
     }
 }
 
-updateBBModules().then(res => console.log('\nreturned ', res))
-
 module.exports = {
     updateModules,
     checkForUpdateModules,
