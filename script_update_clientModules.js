@@ -9,13 +9,13 @@ const update = require(path.join(__dirname, 'script_update_BBWP'));
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
 
-function printComplete(clientDirsLength){
-        console.log('\n' + colors.bold(
-            colors.cyan('Update of ') +
-            colors.magenta('client modules ') +
-            colors.cyan('has been ') +
-            colors.rainbow('completed :)')
-        )  + '\n')
+function printComplete(clientDirsLength) {
+    console.log('\n' + colors.bold(
+        colors.cyan('Update of ') +
+        colors.magenta('client modules ') +
+        colors.cyan('has been ') +
+        colors.rainbow('completed :)')
+    ) + '\n')
 }
 
 function doesClientsExist() {
@@ -28,13 +28,13 @@ function isGitRepo(clientPath) {
 
 
 // Single Pull
-async function pullLatest(repo, clientDirName, index, clientDirsLength){
+async function pullLatest(repo, clientDirName, index, clientDirsLength) {
     let isRepo = isGitRepo(clientDirName);
     if (isRepo) {
         var branch = await update.getBranch(repo);
     }
-    return new Promise( (res, rej) => {
-        if (!isRepo){
+    return new Promise((res, rej) => {
+        if (!isRepo) {
             console.log(messages.notRepo(clientDirName));
             res(null);
         } else if (!branch.onMaster) {
@@ -42,9 +42,9 @@ async function pullLatest(repo, clientDirName, index, clientDirsLength){
             console.log(messages.changeBranchUpdateMsg);
             res(null);
         }
-        if (branch.onMaster){
-            repo.silent(true).pull( (err, msg) => {
-                if (err){
+        if (branch.onMaster) {
+            repo.silent(true).pull((err, msg) => {
+                if (err) {
                     console.log(colors.bold(colors.red(`\nError in `) + colors.magenta(`${clientDirName}`) + colors.red(' modules:\n')));
                     err = err.replace('Aborting', '').trim();
                     console.log(colors.bold(colors.red(err.substr(err.toLowerCase().indexOf('error') + 7))));
@@ -103,8 +103,8 @@ async function updateModules() {
 
 // Single Check
 function fetchLatest(repo) {
-    return new Promise(function(resolve,reject){
-        repo.silent(true).fetch( (err, msg) => {
+    return new Promise(function (resolve, reject) {
+        repo.silent(true).fetch((err, msg) => {
             if (err) {
                 resolve(err);
                 return;
@@ -116,8 +116,8 @@ function fetchLatest(repo) {
 }
 
 function checkStatus(repo) {
-    return new Promise(function(resolve,reject){
-        repo.silent(true).status( (err, msg) => {
+    return new Promise(function (resolve, reject) {
+        repo.silent(true).status((err, msg) => {
             if (err) {
                 reject(err);
                 return;
@@ -160,7 +160,7 @@ async function checkLatest(repo, clientDirName, index, clientDirsLength) {
             res(true)
         }
         res(true);
-    })
+    });
 }
 
 // Multiple Check
@@ -197,6 +197,75 @@ async function checkForUpdateModules() {
     }
 }
 
-module.exports = {updateModules, checkForUpdateModules};
+// BBModules Update
+async function checkUpdateForBBmodules() {
+    let pathToBbmodules = path.join(__dirname, 'bbmodules');
+    let bbmodulesExists = fs.existsSync(pathToBbmodules);
+    let isBbmodulesGitRepo = fs.existsSync(path.join(pathToBbmodules, '.git'));
+    // bbmodules needs to exist and be a git repo
+    if (!bbmodulesExists || !isBbmodulesGitRepo) {
+        messages.logError('bbmodules either does not exist or is not a git repo. Please resolve and try again');
+        return new Promise((res, rej) => res(null));
+    }
+    let repo = git(pathToBbmodules);
+    let branch = await update.getBranch(repo);
+    await fetchLatest(repo);
+    let status = await checkStatus(repo);
+    if (!branch.onMaster) {
+        console.log(messages.logBranch(branch.current, 'bbmodules'));
+        console.log(messages.changeBranchUpdateMsg);
+        return new Promise((res, rej) => res(null));
+    }
+    if (branch.onMaster) {
+        if (status.behind > 0) {
+            console.log(colors.bold(
+                colors.yellow('\nUpdate available for ') +
+                colors.magenta('bbmodules') +
+                colors.yellow('\n')
+            ));
+            return new Promise((res, rej) => res(true));
+        } else {
+            return new Promise((res, rej) => res(null));
+        }
+    } else {
+        return new Promise((res, rej) => res(null));
+    }
+}
 
+async function updateBBModules() {
+    let isUpdateAvailable = await checkUpdateForBBmodules();
+    if (isUpdateAvailable) {
+        let pathToBbmodules = path.join(__dirname, 'bbmodules');
+        let repo = git(pathToBbmodules);
+        return new Promise((res, rej) => {
+            repo.silent(true).pull((err, msg) => {
+                if (err) {
+                    console.log(colors.bold(colors.red(`\nError in `) + colors.magenta(`bb`) + colors.red('modules:\n')));
+                    err = err.replace('Aborting', '').trim();
+                    console.log(colors.bold(colors.red(err.substr(err.toLowerCase().indexOf('error') + 7))));
+                    res(null);
+                }
+                console.log(colors.bold(
+                    colors.cyan('\nGit change summary for ') +
+                    colors.magenta('bb') +
+                    colors.cyan('modules:\n\n') +
+                    colors.green('\t' + 'Changes: ' + msg.summary.changes + '\n') +
+                    colors.green('\t' + 'Insertions: ' + msg.summary.insertions + '\n') +
+                    colors.green('\t' + 'Deletions: ' + msg.summary.deletions)
+                ));
+                res(true);
+            });
+        });
+    } else {
+        return new Promise((res, rej) => res('null'));
+    }
+}
 
+updateBBModules().then(res => console.log('\nreturned ', res))
+
+module.exports = {
+    updateModules,
+    checkForUpdateModules,
+    checkUpdateForBBmodules,
+    updateBBModules
+};
