@@ -185,6 +185,7 @@ let variantLogic = () => {
 variantLogic();
 
 ```
+Note that while the top level directory for _bbmodules_ and the client modules (i.e. _happybooksmodules_) are aliased, any shared modules that you create will require a relative path in the import statement.
 
 
 
