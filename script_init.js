@@ -52,7 +52,7 @@ function getPaths(testInfo) {
             package: path.join(clientPath, 'test_template', 'package.json'),
             gulpFile: path.join(clientPath, 'test_template', 'gulpFile.js'),
         },
-        bbmodules: path.join(__dirname, 'bb_modules'),
+        bbmodules: path.join(__dirname, 'bbmodules'),
         clientmodules: path.join(clientPath, 'modules'),
         newTest,
         replace: {
@@ -316,7 +316,7 @@ async function buildTest(testInfo) {
         // Removing AWS repo creation for Cloud9
         // await bbaws.create(paths.repoName);
         // await initGit(paths);
-        
+
         // Done
         console.log(messages.initComplete(testInfo));
     }
