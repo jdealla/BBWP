@@ -59,6 +59,7 @@ function getPaths(testInfo) {
             package: path.join(newTest, 'package.json'),
             webpack: path.join(newTest, 'webpack*'),
             scss: path.join(newTest, '*', '*.scss'),
+            config: path.join(newTest, '*.config.js')
         },
         nodemodules,
         babelenv: path.join(nodemodules, '@babel', 'preset-env'),
@@ -179,8 +180,8 @@ function pcPath(str){
 // Sets Aliases for Client Modules in test build configs
 function buildWebpackReplaceArrays(paths, client) {
     // For All Clients
-    const standardFrom = [/replacebabelpresetenv/g, /replacebabelpresetreact/g, /replacenodepath/g, 'replacebbmodules', 'replacemodules'];
-    const standardTo = [pcPath(paths.babelenv), pcPath(paths.babelreact), pcPath(paths.nodemodules), pcPath(paths.bbmodules), pcPath(paths.clientmodules)];
+    const standardFrom = [/replacebabelpresetenv/g, /replacebabelpresetreact/g, /replacenodepath/g, 'replacebbmodules', 'replacemodules', /replaceClientName/g];
+    const standardTo = [pcPath(paths.babelenv), pcPath(paths.babelreact), pcPath(paths.nodemodules), pcPath(paths.bbmodules), pcPath(paths.clientmodules), client];
     let obj = {};
 
     switch (client) {
@@ -215,10 +216,11 @@ function buildWebpackReplaceArrays(paths, client) {
 // This function sets absolute paths in the new test build to run scripts and import modules from the directory of the build tool.
 async function replacePathsInTest(testInfo, paths) {
     let dateCreated = testInfo.hasOwnProperty('dateCreated') ? testInfo.dateCreated : paths.dateCreated;
+
     // Package.JSON options
     const packageOptions = {
         files: paths.replace.package,
-        from: [/replacenodepath/g, 'replacetestname', 'replacedatecreated', 'replaceclient'],
+        from: [/replacenodepath/g, 'replacetestname', 'replacedatecreated', /replaceclient/g],
         to: [pcPath(paths.nodemodules), testInfo.testName, dateCreated, testInfo.client],
     };
 
@@ -230,19 +232,27 @@ async function replacePathsInTest(testInfo, paths) {
         to: webpackReplaceArrays.to,
     };
 
+    // Test Configuration files
+    const configFileOptions = {
+        files: paths.replace.config,
+        from: ['replacetestname'],
+        to: [testInfo.testName],
+    };
+
     // SCSS options
-    let testNameRegex = /[a-z]+[0-9]+/gi;
+    // let testNameRegex = /[a-z]+[0-9]+/gi;
     // const SCSSOptions = {
     //     files: path.join(paths.newTest, '*', '*.scss'),
     //     from: ['bbtestnamereplace'],
     //     to: testNameRegex.exec(testInfo.testName)[0].toUpperCase(),
     // };
 
-    await replace(packageOptions)
+    await replace(packageOptions);
+    await replace(configFileOptions);
     // if (testInfo.client === 'amex') {
     //     await replace(SCSSOptions);  
     // }
-    return replace(webpackOptions)
+    return replace(webpackOptions);
 }
 
 function argumentsAreValidToBuild(args) {
@@ -259,6 +269,13 @@ function getTestInfoFromArgs(args) {
         testName: args[2],
         numberOfVariants: parseInt(args[3])
     }
+}
+
+// replaces BB.client.test.config name in file
+function renameConfigFile(paths, client){
+    const ogConfig = path.join(paths.newTest, 'BB.client.test.config.js');
+    const newPath = path.join(paths.newTest, `BB.${client}.test.config.js`)
+    fs.renameSync(ogConfig, newPath);
 }
 
 // Commits to the AWS Repo; Not used in Cloud9 Version
@@ -294,9 +311,12 @@ async function buildTest(testInfo) {
         await Promise.all(variantLetters.map((letter) => createNewVariantDir(paths, letter)));
         // Replace Paths
         await replacePathsInTest(testInfo, paths);
+        renameConfigFile(paths, testInfo.client);
+
         // Removing AWS repo creation for Cloud9
         // await bbaws.create(paths.repoName);
         // await initGit(paths);
+        
         // Done
         console.log(messages.initComplete(testInfo));
     }
