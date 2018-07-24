@@ -48,7 +48,12 @@ const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', '
 4. Within the BBWP directory, make a directory named ``clients``. Navigate to the newly created ``clients`` directory and make a new directory with the name of the client for that environment.
 The name of the directory for the client should match one the strings in the clients array above.
 
-5. Navigate back to the main BBWP directory, and run the following command to install the bbmodules ``git clone https://bitbucket.org/jdalessandro_brooksbell/brooks-bell-modules.git bbmodules``.
+5. Navigate back to the main BBWP directory, and run the following command to install the bbmodules ``git clone https://github.com/BrooksBellInc/bbwp.git bb_modules``.
+
+6. If BBTBT is already installed in the environments directory:
+
+   execute command: npm install -g github:gulpjs/gulp#4.0
+   then, traverse into BBTBT, and execute command: npm link
 
 #### Common Issues in Installation
 * If the correct Node version is not set before the ``npm link`` command is executed, the ``node-sass`` package will be bound to the incorrect version of Node, and therefore will break execution during Webpack compiling. If this is the case, you'll need to make sure to install and use the correct version of Node (see above), delete the ``node-sass`` package, and run ``npm install``.
