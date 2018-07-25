@@ -42,7 +42,7 @@ After you have the correct version of Node installed and in use, follow these st
 * Note that the client name should match one of the strings in the following client array:
 
 ```javascript
-const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', 'metlife', 'blizzard', 'nick', 'ihg', 'fedex', 'vfoundation', 'suntrust', 'oppenheimer', 'bankofamerica', 'clinique', 'totalwine', 'blackrock', 'salesforce'];
+const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', 'metlife', 'blizzard', 'nick', 'ihg', 'fedex', 'vfoundation', 'suntrust', 'oppenheimer', 'bankofamerica', 'clinique', 'totalwine', 'blackrock', 'salesforce', 'viacom'];
 ```
 
 4. Within the BBWP directory, make a directory named ``clients``. Navigate to the newly created ``clients`` directory and make a new directory with the name of the client for that environment.

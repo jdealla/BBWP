@@ -17,7 +17,7 @@ const red = promptHelpers.red;
 const cyan = promptHelpers.cyan;
 const magenta = promptHelpers.magenta;
 
-const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', 'metlife', 'blizzard', 'nick', 'ihg', 'fedex', 'vfoundation', 'suntrust', 'oppenheimer', 'bankofamerica', 'clinique', 'totalwine', 'blackrock', 'salesforce'];
+const clients = ['amex', 'gap', 'barnes', 'ralphlauren', 'universalhollywood', 'metlife', 'blizzard', 'nick', 'ihg', 'fedex', 'vfoundation', 'suntrust', 'oppenheimer', 'bankofamerica', 'clinique', 'totalwine', 'blackrock', 'salesforce', 'viacom'];
 
 let verifyClient = (clientInput) => {
     let clientName = clientInput.toLowerCase();
