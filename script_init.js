@@ -159,7 +159,7 @@ async function addNewVariantDir(args1) {
     );
 }
 
-// Gets Letters for variant naming upon init
+// Gets Letters for variant naming upon inits
 function getVariantLetters(numberOfVariants) {
     let arr = ['control'];
     for (var i = 65; i < 65 + numberOfVariants; i++) {
