@@ -2,7 +2,7 @@ const path = require('path');
 const git = require('simple-git');
 const spawn = require('cross-spawn');
 const currentPackage = require(path.resolve(__dirname, 'package.json'));
-
+const fs = require('fs-extra');
 const colors = require('colors');
 const promptHelpers = require(path.join(__dirname, 'prompt_helpers'));
 const messages = promptHelpers.messages;
