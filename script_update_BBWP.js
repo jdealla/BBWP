@@ -166,9 +166,16 @@ function getStatusObject(res) {
     }
 }
 
+function getCurrentClient(){
+    return currentPackage.hasOwnProperty('config') && currentPackage.config.hasOwnProperty('client') ?
+        currentPackage.config.client :
+        null;
+}
+
 async function updateBBWP(status) {
     try {
         console.log('\n' + messages.btname + messages.updateWelcome);
+        let currentClient = getCurrentClient();
         if (status.updateAvailable) {
             console.log(messages.updateStarting);
             await stashChanges();
@@ -178,7 +185,9 @@ async function updateBBWP(status) {
 
             console.log(messages.installPackages);
             await updatePackages();
-
+            let newPackage = require(path.resolve(__dirname, 'package.json'));
+            newPackage.config = {client: currentClient};
+            fs.writeFileSync(path.resolve(__dirname, 'package.json'), JSON.stringify(newPackage));
             console.log(messages.updateComplete);
         } else {
             let commits = await checkStatus();
@@ -186,6 +195,9 @@ async function updateBBWP(status) {
                 console.log(messages.updateStarting);
                 await stashChanges();
                 let pullMsg = await pullLatest();
+                let newPackage = require(path.resolve(__dirname, 'package.json'));
+                newPackage.config = {client: currentClient};
+                fs.writeFileSync(path.resolve(__dirname, 'package.json'), JSON.stringify(newPackage));
                 printPullMessage(pullMsg);
                 console.log(messages.updateComplete);
             } else {
